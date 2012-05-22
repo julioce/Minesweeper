@@ -6,25 +6,24 @@ import java.util.Random;
 
 public class Main extends MatrixUtil
 {
-	final static int LINE = 20;
-	final static int COLUMN = 20;
-	final static int BOMBQTY = 50;
-	final static int GAMEDIFICULT = 2;
 	static ArrayList<MatrixPosition> BombPosition = new ArrayList<MatrixPosition>();
 	
 	public static void main(String[] args) 
 	{
 		
-		int mapper[][] = new int[LINE][COLUMN]; 
-		int cellQt = LINE*COLUMN;
+		int mapper[][] = new int[Configurations.LINE][Configurations.COLUMN]; 
+		int cellQt = Configurations.LINE*Configurations.COLUMN;
 		
-		if(cellQt < BOMBQTY)
+		if(cellQt < Configurations.BOMBQTY)
 			System.out.println("PEEEEEE - no de bombas maior que a qt de campos");
 		
 		SetUpMap(mapper);
 		GenerateBombs(mapper);
 		ValidateBombSpaces(mapper);
 		PrintMatrix(mapper);
+		
+		/* Inicializa a GUI */
+		View view = new View();
 	}
 	
 	public static void SetUpMap(int mapper[][])
@@ -40,7 +39,7 @@ public class Main extends MatrixUtil
 	
 	public static void GenerateBombs(int mapper[][])
 	{
-		int bombCount = BOMBQTY;
+		int bombCount = Configurations.BOMBQTY;
 		int insertedBombs = 0;
 		Random randGenerator = new Random(912397);
 		for(int i =0; i < bombCount; i++)
