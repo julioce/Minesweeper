@@ -1,18 +1,19 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 
 
 public class Main extends MatrixUtil
 {
 	static ArrayList<MatrixPosition> BombPosition = new ArrayList<MatrixPosition>();
+	static int lines = 20;
+	static int columns = 20;
 	
 	public static void main(String[] args) 
 	{
 		
-		int mapper[][] = new int[Configurations.LINE][Configurations.COLUMN]; 
-		int cellQt = Configurations.LINE*Configurations.COLUMN;
+		int mapper[][] = new int[lines][columns]; 
+		int cellQt = lines*columns;
 		
 		if(cellQt < Configurations.BOMBQTY)
 			System.out.println("PEEEEEE - no de bombas maior que a qt de campos");
@@ -180,6 +181,11 @@ public class Main extends MatrixUtil
 		}
 		
 		return mapPositionAndFieldValue;
+	}
+
+	public static void setSize(String linesValue, String columnsValue) {
+		lines = Integer.parseInt(linesValue);
+		columns = Integer.parseInt(columnsValue);
 	}
 
 }
