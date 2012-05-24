@@ -1,5 +1,4 @@
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -21,13 +20,18 @@ import javax.swing.SwingConstants;
 
 public class View extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 8855087334693558727L;
+	
+	/* Propriedades da Janela */
+	static int WIDTH = 600;
+	static int HEIGHT = 480;
 
 	/* Cria tudo: Janela, menu, label, botão... */
-	public static JFrame window = new JFrame("Trabalho 1 - IA");
+	public static JFrame window = new JFrame("IA - Campo Minado");
 	public static JFrame popupSizeWindow = new JFrame("Size of the game");
 	
 	public static JMenuBar menu = new JMenuBar();
 	public static JMenu gameMenu = new JMenu("Game");
+	public static JMenuItem gameStart = new JMenuItem("Start");
 	public static JMenuItem gameExit = new JMenuItem("Exit");
 	
 	public static JMenu difficultyMenu = new JMenu("Difficulty");
@@ -40,44 +44,49 @@ public class View extends JPanel implements ActionListener {
 	public static JMenuItem setSize = new JMenuItem("Set size");
 	public static JLabel lines = new JLabel("Lines", SwingConstants.LEFT);
 	public static JLabel columns = new JLabel("Columns", SwingConstants.LEFT);
-	public JTextField linesValue = new JTextField();
-	public JTextField columnsValue = new JTextField();
+	public static JTextField linesValue = new JTextField();
+	public static JTextField columnsValue = new JTextField();
 	public static JButton sizeOk = new JButton("Ok");
-	
-	public static JLabel titleLabel = new JLabel();
 
 	public View(){
-		/* Label do trabalho */
-		titleLabel.setText(Configurations.PROJECT_NAME);
-		titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-		titleLabel.setBounds(10, 10, 515, 30);
-
-		/* Adiciona menu */
+		/* Adiciona dificuldades */
 		difficultyTypes.add(difficultyEasy);
 		difficultyTypes.add(difficultyIntermediary);
 		difficultyTypes.add(difficultyHard);
-		difficultyEasy.setSelected(true);
 		difficultyMenu.add(difficultyEasy);
 		difficultyMenu.add(difficultyIntermediary);
 		difficultyMenu.add(difficultyHard);
+		
+		/* Adiciona menu */
 		sizeMenu.add(setSize);
+		gameMenu.add(gameStart);
 		gameMenu.add(gameExit);
 		menu.add(gameMenu);
 		menu.add(difficultyMenu);
 		menu.add(sizeMenu);
+		
+		/* Adiciona ouvintes do menu */
 		gameExit.addActionListener(this);
 		gameExit.setActionCommand("exit");
+		gameStart.addActionListener(this);
+		gameStart.setActionCommand("start");
+		difficultyEasy.addActionListener(this);
+		difficultyEasy.setActionCommand("setEasy");
+		difficultyIntermediary.addActionListener(this);
+		difficultyIntermediary.setActionCommand("setIntermediary");
+		difficultyHard.addActionListener(this);
+		difficultyHard.setActionCommand("setHard");
+		difficultyEasy.setSelected(true);
 		setSize.addActionListener(this);
 		setSize.setActionCommand("openPopupSizeWindow");
 		
 		/* Adiciona itens na janela principal */
 		window.setJMenuBar(menu);
-		window.add(titleLabel);
 		window.add(this);
 		window.add(new Canvas());
 
 		/* Amarra tudo e exibe a janela */
-		window.setPreferredSize(new Dimension(Configurations.WIDTH_SIZE, Configurations.HEIGHT));
+		window.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		window.setFocusTraversalKeysEnabled(true);
 		window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,6 +96,12 @@ public class View extends JPanel implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		/* botão de star do jogo */
+		if(arg0.getActionCommand().equals("start")) {
+			Main.generateField();
+		}
+		
+		/* Abre janela de configuração */
 		if(arg0.getActionCommand().equals("openPopupSizeWindow")) {
 			sizeOk.addActionListener(this);
 			sizeOk.setActionCommand("recordSize");
@@ -106,18 +121,31 @@ public class View extends JPanel implements ActionListener {
 			
 			popupSizeWindow.add(panel);
 			popupSizeWindow.setLocationRelativeTo(window);
-			popupSizeWindow.setLocation(Configurations.WIDTH_SIZE/4, Configurations.HEIGHT/4);  
-			popupSizeWindow.setPreferredSize(new Dimension(Configurations.WIDTH_SIZE/2, Configurations.HEIGHT/6));
+			popupSizeWindow.setLocation(WIDTH/4, HEIGHT/4);
+			popupSizeWindow.setPreferredSize(new Dimension(WIDTH/2, HEIGHT/6));
 			popupSizeWindow.setResizable(false);
 			popupSizeWindow.pack();
 			popupSizeWindow.setVisible(true);
-			
+			popupSizeWindow.repaint();
 		}
 		
+		/* saída do jogo */
 		if(arg0.getActionCommand().equals("exit")) {
 			System.exit(0);
 		}
 		
+		/* configura a dificuldade */
+		if(arg0.getActionCommand().equals("setEasy")) {
+			Main.setDifficulty(1);
+		}
+		if(arg0.getActionCommand().equals("setIntermediary")) {
+			Main.setDifficulty(2);
+		}
+		if(arg0.getActionCommand().equals("setHard")) {
+			Main.setDifficulty(3);
+		}
+		
+		/* grava o tamanho */
 		if(arg0.getActionCommand().equals("recordSize")) {
 			Main.setSize(linesValue.getText(), columnsValue.getText());
 			popupSizeWindow.dispose();

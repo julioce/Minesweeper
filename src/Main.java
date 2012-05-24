@@ -1,33 +1,33 @@
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-
 public class Main extends MatrixUtil
 {
-	static ArrayList<MatrixPosition> BombPosition = new ArrayList<MatrixPosition>();
-	static int lines = 20;
-	static int columns = 20;
+	static ArrayList<MatrixPosition> bombPosition;
+	static int lines;
+	static int columns;
+	static int difficulty = 1;
 	
 	public static void main(String[] args) 
 	{
-		
-		int mapper[][] = new int[lines][columns]; 
-		int cellQt = lines*columns;
-		
-		if(cellQt < Configurations.BOMBQTY)
-			System.out.println("PEEEEEE - no de bombas maior que a qt de campos");
-		
-		SetUpMap(mapper);
-		GenerateBombs(mapper);
-		ValidateBombSpaces(mapper);
-		PrintMatrix(mapper);
-		
 		/* Inicializa a GUI */
+		@SuppressWarnings("unused")
 		View view = new View();
 	}
 	
-	public static void SetUpMap(int mapper[][])
+	public static void generateField(){
+
+		int mapper[][] = new int[lines][columns];
+		bombPosition = new ArrayList<MatrixPosition>();
+		setUpMap(mapper);
+		generateBombs(mapper);
+		validateBombSpaces(mapper);
+		printMatrix(mapper);
+	}
+	
+	public static void setUpMap(int mapper[][])
 	{
 		for (int i=0; i< mapper.length; i++)
 		{
@@ -38,23 +38,30 @@ public class Main extends MatrixUtil
 		}
 	}
 	
-	public static void GenerateBombs(int mapper[][])
+	public static void generateBombs(int mapper[][])
 	{
-		int bombCount = Configurations.BOMBQTY;
+		int bombQuantity = lines+columns;
 		int insertedBombs = 0;
 		Random randGenerator = new Random(912397);
-		for(int i =0; i < bombCount; i++)
+		
+		for(int i =0; i < bombQuantity; i++)
 		{
 			int randLine = randGenerator.nextInt() % mapper.length;
-			if(randLine  < 0) randLine*=-1;
+			if(randLine < 0){
+				randLine*=-1;
+			}
+			
 			int randColumn = randGenerator.nextInt() % mapper[0].length;
-			if(randColumn < 0) randColumn*=-1;
+			if(randColumn < 0){
+				randColumn*=-1;
+			}
+			
 			if(mapper[randLine][randColumn] != -1)
 			{
 				//adicionando bomba
 				mapper[randLine][randColumn] = -1;
 				
-				BombPosition.add(new MatrixPosition(randLine,randColumn));
+				bombPosition.add(new MatrixPosition(randLine,randColumn));
 				
 				insertedBombs ++;
 				MatrixPosition pos = new MatrixPosition(randLine, randColumn);
@@ -63,7 +70,7 @@ public class Main extends MatrixUtil
 			else
 			{
 				i--;
-				System.out.println("space conflict");
+				System.out.println("Bomb space conflict");
 			}
 		}
 		
@@ -143,22 +150,34 @@ public class Main extends MatrixUtil
 	}
 	
 	
-	public static void PrintMatrix(int mapper[][])
+	public static void printMatrix(int mapper[][])
 	{
+		int width = 0;
+		int height = 0;
+		
 		for (int i=0; i< mapper.length; i++)
 		{
 			System.out.print("[");
-		for(int j= 0; j < mapper[0].length ; j++)
-		{
-			System.out.print(" "+ mapper[i][j] + " ");
-		} 
-		System.out.println("]");
+			
+			for(int j= 0; j < mapper[0].length ; j++)
+			{
+				//Gera os botões da view
+				Button.generateField(i, j, mapper[i][j]);
+				System.out.print(" "+ mapper[i][j] + " ");
+				height = j;
+			}
+			
+			System.out.println("]");
+			
+			width = i;
 		}
+		
+		View.window.setSize(new Dimension(width*Button.buttonWidth+30, height*Button.buttonHeight+50));
 	}
 	
-	public static void ValidateBombSpaces(int mapper[][])
+	public static void validateBombSpaces(int mapper[][])
 	{
-		for (MatrixPosition pos : BombPosition) 
+		for (MatrixPosition pos : bombPosition) 
 		{
 			GetLocalMap(mapper,pos,1);
 		}
@@ -175,7 +194,7 @@ public class Main extends MatrixUtil
 			if(isNearValid(mapper, pos, nearEnum))
 			{
 				nextPos = new MatrixPosition(pos.X + nearEnum.x, pos.Y + nearEnum.y);
-				mapPositionAndFieldValue.put(nextPos,mapper[nextPos.X][nextPos.Y]);
+				mapPositionAndFieldValue.put(nextPos, mapper[nextPos.X][nextPos.Y]);
 			}
 			
 		}
@@ -186,6 +205,10 @@ public class Main extends MatrixUtil
 	public static void setSize(String linesValue, String columnsValue) {
 		lines = Integer.parseInt(linesValue);
 		columns = Integer.parseInt(columnsValue);
+	}
+
+	public static void setDifficulty(int i) {
+		difficulty = i;
 	}
 
 }
