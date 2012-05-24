@@ -10,9 +10,9 @@ public class Button {
 	public static void generateField(int x, int y, int value) {
 		JButton button = new JButton();
 		
-		button.setBounds(x*buttonWidth, y*buttonHeight, buttonWidth, buttonHeight);
+		button.setBounds(y*buttonWidth, x*buttonHeight, buttonWidth, buttonHeight);
 		button.setMargin(new Insets(1,1,1,1)); 
-		button.setFont(new Font("Arial", Font.PLAIN, 10));
+		button.setFont(new Font("Arial", Font.BOLD, 12));
 		
 		switch(value){
 			case 0:
@@ -26,7 +26,7 @@ public class Button {
 				break;
 		}
 		
-		View.window.add(button);
+		View.panel.add(button);
 	}
 
 }

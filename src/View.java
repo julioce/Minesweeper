@@ -27,6 +27,7 @@ public class View extends JPanel implements ActionListener {
 
 	/* Cria tudo: Janela, menu, label, botão... */
 	public static JFrame window = new JFrame("IA - Campo Minado");
+	public static JPanel panel = new JPanel(null);
 	public static JFrame popupSizeWindow = new JFrame("Size of the game");
 	
 	public static JMenuBar menu = new JMenuBar();
@@ -40,8 +41,6 @@ public class View extends JPanel implements ActionListener {
 	public static JRadioButtonMenuItem difficultyIntermediary = new JRadioButtonMenuItem("Intermediary");
 	public static JRadioButtonMenuItem difficultyHard = new JRadioButtonMenuItem("Hard");
 	
-	public static JMenu sizeMenu = new JMenu("Size");
-	public static JMenuItem setSize = new JMenuItem("Set size");
 	public static JLabel lines = new JLabel("Lines", SwingConstants.LEFT);
 	public static JLabel columns = new JLabel("Columns", SwingConstants.LEFT);
 	public static JTextField linesValue = new JTextField();
@@ -58,12 +57,10 @@ public class View extends JPanel implements ActionListener {
 		difficultyMenu.add(difficultyHard);
 		
 		/* Adiciona menu */
-		sizeMenu.add(setSize);
 		gameMenu.add(gameStart);
 		gameMenu.add(gameExit);
 		menu.add(gameMenu);
 		menu.add(difficultyMenu);
-		menu.add(sizeMenu);
 		
 		/* Adiciona ouvintes do menu */
 		gameExit.addActionListener(this);
@@ -77,8 +74,6 @@ public class View extends JPanel implements ActionListener {
 		difficultyHard.addActionListener(this);
 		difficultyHard.setActionCommand("setHard");
 		difficultyEasy.setSelected(true);
-		setSize.addActionListener(this);
-		setSize.setActionCommand("openPopupSizeWindow");
 		
 		/* Adiciona itens na janela principal */
 		window.setJMenuBar(menu);
@@ -92,6 +87,8 @@ public class View extends JPanel implements ActionListener {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.pack();
 		window.setVisible(true);
+		
+		generatePopup();
 	}
 	
 	@Override
@@ -99,34 +96,6 @@ public class View extends JPanel implements ActionListener {
 		/* botão de star do jogo */
 		if(arg0.getActionCommand().equals("start")) {
 			Main.generateField();
-		}
-		
-		/* Abre janela de configuração */
-		if(arg0.getActionCommand().equals("openPopupSizeWindow")) {
-			sizeOk.addActionListener(this);
-			sizeOk.setActionCommand("recordSize");
-			JPanel panel = new JPanel(null);
-			
-			lines.setBounds(10, 10, 80, 20);
-			columns.setBounds(10, 30, 80, 20);
-			linesValue.setBounds(90, 10, 80, 20);
-			columnsValue.setBounds(90, 30, 80, 20);
-			sizeOk.setBounds(190, 30, 60, 20);
-			
-			panel.add(linesValue);
-			panel.add(columnsValue);
-			panel.add(lines);
-			panel.add(columns);
-			panel.add(sizeOk);
-			
-			popupSizeWindow.add(panel);
-			popupSizeWindow.setLocationRelativeTo(window);
-			popupSizeWindow.setLocation(WIDTH/4, HEIGHT/4);
-			popupSizeWindow.setPreferredSize(new Dimension(WIDTH/2, HEIGHT/6));
-			popupSizeWindow.setResizable(false);
-			popupSizeWindow.pack();
-			popupSizeWindow.setVisible(true);
-			popupSizeWindow.repaint();
 		}
 		
 		/* saída do jogo */
@@ -145,11 +114,38 @@ public class View extends JPanel implements ActionListener {
 			Main.setDifficulty(3);
 		}
 		
-		/* grava o tamanho */
+		/* grava o tamanho do campo */
 		if(arg0.getActionCommand().equals("recordSize")) {
 			Main.setSize(linesValue.getText(), columnsValue.getText());
 			popupSizeWindow.dispose();
 		}
+	}
+
+	private void generatePopup() {
+		sizeOk.addActionListener(this);
+		sizeOk.setActionCommand("recordSize");
+		JPanel panel = new JPanel(null);
+		
+		lines.setBounds(10, 10, 80, 20);
+		columns.setBounds(10, 30, 80, 20);
+		linesValue.setBounds(90, 10, 80, 20);
+		columnsValue.setBounds(90, 30, 80, 20);
+		sizeOk.setBounds(190, 30, 60, 20);
+		
+		panel.add(linesValue);
+		panel.add(columnsValue);
+		panel.add(lines);
+		panel.add(columns);
+		panel.add(sizeOk);
+		
+		popupSizeWindow.add(panel);
+		popupSizeWindow.setLocationRelativeTo(window);
+		popupSizeWindow.setLocation(WIDTH/4, HEIGHT/4);
+		popupSizeWindow.setPreferredSize(new Dimension(WIDTH/2, HEIGHT/6));
+		popupSizeWindow.setResizable(false);
+		popupSizeWindow.pack();
+		popupSizeWindow.setVisible(true);
+		popupSizeWindow.repaint();
 	}
 }
 

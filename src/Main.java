@@ -163,7 +163,7 @@ public class Main extends MatrixUtil
 			{
 				//Gera os botões da view
 				Button.generateField(i, j, mapper[i][j]);
-				System.out.print(" "+ mapper[i][j] + " ");
+				//System.out.print(" "+ mapper[i][j] + " ");
 				height = j;
 			}
 			
@@ -172,7 +172,8 @@ public class Main extends MatrixUtil
 			width = i;
 		}
 		
-		View.window.setSize(new Dimension(width*Button.buttonWidth+30, height*Button.buttonHeight+50));
+		View.window.setSize(new Dimension(height*Button.buttonWidth+30, width*Button.buttonHeight+80));
+		View.window.add(View.panel);
 	}
 	
 	public static void validateBombSpaces(int mapper[][])
