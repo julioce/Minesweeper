@@ -1,3 +1,4 @@
+package Model;
 
 public enum NearPositionEnum {
 	N (-1,0),

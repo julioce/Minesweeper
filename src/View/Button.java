@@ -1,11 +1,12 @@
+package View;
 import java.awt.Font;
 import java.awt.Insets;
 
 import javax.swing.JButton;
 
 public class Button {
-	protected static int buttonWidth = 30;
-	protected static int buttonHeight = 30;
+	public static int buttonWidth = 30;
+	public static int buttonHeight = 30;
 
 	public static void generateField(int x, int y, int value) {
 		JButton button = new JButton();
@@ -26,7 +27,7 @@ public class Button {
 				break;
 		}
 		
-		View.panel.add(button);
+		Window.panel.add(button);
 	}
 
 }
