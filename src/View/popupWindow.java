@@ -83,7 +83,7 @@ public class popupWindow extends JPanel implements ActionListener {
 			int lines = Integer.parseInt(linesValue.getText());
 			int columns = Integer.parseInt(columnsValue.getText());
 			
-			if(arg0.getActionCommand().equals("recordSize") && lines > 1 && columns > 1) {
+			if(arg0.getActionCommand().equals("recordSize") && lines > 6 && columns > 6) {
 				
 				/* configura as linhas e colunas */
 				Main.setSize(lines, columns);

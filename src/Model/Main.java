@@ -11,7 +11,8 @@ public class Main extends MatrixUtil{
 	static ArrayList<MatrixPosition> bombPosition;
 	static int lines;
 	static int columns;
-	static int difficulty = 1;
+	static int difficulty;
+	static int bombQuantity;
 	
 	public static void main(String[] args) {
 		/* Inicializa a GUI */
@@ -26,9 +27,58 @@ public class Main extends MatrixUtil{
 		setUpMap(mapper);
 		generateBombs(mapper);
 		validateBombSpaces(mapper);
+		evaluateMap(mapper);
 		printMatrix(mapper);
 	}
 	
+	private static void evaluateMap(int[][] mapper) {
+		int values[] = {0, 0, 0, 0, 0, 0, 0, 0};
+		double evaluationGrade = 0;
+		
+		for (int i=0; i< mapper.length; i++){
+			for(int j= 0; j < mapper[0].length; j++){
+				switch (mapper[i][j]) {
+				case 1:
+					values[0]++; 
+					break;
+				case 2:
+					values[1]++; 
+					break;
+				case 3:
+					values[2]++; 
+					break;
+				case 4:
+					values[3]++; 
+					break;
+				case 5:
+					values[4]++; 
+					break;
+				case 6:
+					values[5]++; 
+					break;
+				case 7:
+					values[6]++; 
+					break;
+				case 8:
+					values[7]++; 
+					break;
+				default:
+					break;
+				}
+				
+			}
+		}
+		
+		for (int i = 1; i < values.length; i++) {
+			values[i] = values[i]*i;
+			evaluationGrade += values[i];
+		}
+		
+		evaluationGrade = evaluationGrade/(lines*columns);
+		
+		System.out.println("Difficulty evaluation = " + evaluationGrade);
+	}
+
 	public static void setUpMap(int mapper[][]){
 		for (int i=0; i< mapper.length; i++){
 			for(int j= 0; j < mapper[0].length; j++){
@@ -38,9 +88,11 @@ public class Main extends MatrixUtil{
 	}
 	
 	public static void generateBombs(int mapper[][]){
-		int bombQuantity = lines+columns;
 		int insertedBombs = 0;
-		Random randGenerator = new Random(912397);
+		int conflicts = 0;
+		int bombQuantity = lines+columns*difficulty;
+		
+		Random randGenerator = new Random();
 		
 		for(int i =0; i < bombQuantity; i++){
 			
@@ -63,14 +115,15 @@ public class Main extends MatrixUtil{
 				insertedBombs ++;
 				MatrixPosition pos = new MatrixPosition(randLine, randColumn);
 				UpdateNearFields(mapper,pos);
-			}
-			else{
+			}else{
 				i--;
-				System.out.println("Bomb space conflict");
+				conflicts++;
+				
 			}
 		}
 		
-		System.out.println("insertedbombs = " + insertedBombs);
+		System.out.println("Bomb space conflicts = " + conflicts);
+		System.out.println("Inserted bombs = " + insertedBombs);
 	}
 	
 	public static void UpdateNearFields(int mapper[][],MatrixPosition pos){
@@ -151,8 +204,7 @@ public class Main extends MatrixUtil{
 			}
 		}
 	}
-	
-	
+
 	public static void printMatrix(int mapper[][]){
 		for (int i=0; i < mapper.length; i++){
 			for(int j= 0; j < mapper[0].length ; j++){
@@ -169,7 +221,7 @@ public class Main extends MatrixUtil{
 	public static void validateBombSpaces(int mapper[][]){
 		//Pego os nearfields relativos a bomba
 		for (MatrixPosition pos : bombPosition) {
-			GetLocalMap(mapper,pos,1);
+			GetLocalMap(mapper, pos, 1);
 		}
 	}
 	
