@@ -1,5 +1,4 @@
 package Model;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -24,11 +23,12 @@ public class Main extends MatrixUtil{
 
 		int mapper[][] = new int[lines][columns];
 		bombPosition = new ArrayList<MatrixPosition>();
+		
 		setUpMap(mapper);
 		generateBombs(mapper);
 		validateBombSpaces(mapper);
 		evaluateMap(mapper);
-		printMatrix(mapper);
+		printGame(mapper);
 	}
 	
 	private static void evaluateMap(int[][] mapper) {
@@ -205,17 +205,17 @@ public class Main extends MatrixUtil{
 		}
 	}
 
-	public static void printMatrix(int mapper[][]){
+	public static void printGame(int mapper[][]){
 		for (int i=0; i < mapper.length; i++){
 			for(int j= 0; j < mapper[0].length ; j++){
-				//Gera os botões da view
-				Button.generateField(i, j, mapper[i][j]);
-				//System.out.print(" "+ mapper[i][j] + " ");
+				// Gera os botões da janela
+				new Button(i, j, mapper[i][j]);
 			}
 		}
 		
-		Window.window.setSize(new Dimension((mapper[0].length-1)*Button.buttonWidth+30, (mapper.length-1)*Button.buttonHeight+80));
-		Window.window.add(Window.panel);
+		//Atualiza a janela com o jogo pronto
+		Window.showField(mapper[0].length);
+		
 	}
 	
 	public static void validateBombSpaces(int mapper[][]){

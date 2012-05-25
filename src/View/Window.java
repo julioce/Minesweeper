@@ -12,6 +12,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class Window extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 8855087334693558727L;
@@ -30,6 +32,18 @@ public class Window extends JPanel implements ActionListener {
 	
 
 	public Window(){
+		/* Pega o Look and Feel do OS nativo */
+		String nativeLF = UIManager.getSystemLookAndFeelClassName();
+
+		/* Instala o Look and Feel */
+		try {
+			UIManager.setLookAndFeel(nativeLF);
+		}
+		catch (InstantiationException e) {}
+		catch (ClassNotFoundException e) {}
+		catch (UnsupportedLookAndFeelException e) {}
+		catch (IllegalAccessException e) {}
+		
 		/* Adiciona menu */
 		gameMenu.add(gameExit);
 		menu.add(gameMenu);
@@ -50,6 +64,9 @@ public class Window extends JPanel implements ActionListener {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.pack();
 		window.setVisible(true);
+		
+		/* Desabilita enquanto o usuário não usar a janela de configuração */
+		gameMenu.setEnabled(false);
 		window.setEnabled(false);
 		
 		@SuppressWarnings("unused")
@@ -63,6 +80,11 @@ public class Window extends JPanel implements ActionListener {
 			System.exit(0);
 		}
 		
+	}
+
+	public static void showField(int length) {
+		window.setSize(new Dimension((length-1)*Button.buttonWidth+30, (length-1)*Button.buttonHeight+80));
+		window.add(Window.panel);
 	}
 
 }
