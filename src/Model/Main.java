@@ -13,10 +13,11 @@ public class Main extends MatrixUtil{
 	static int difficulty;
 	static int bombQuantity;
 	
+	static Window view;
+	
 	public static void main(String[] args) {
 		/* Inicializa a GUI */
-		@SuppressWarnings("unused")
-		Window view = new Window();
+		view = new Window();
 	}
 	
 	public static void generateField(){
@@ -90,7 +91,7 @@ public class Main extends MatrixUtil{
 	public static void generateBombs(int mapper[][]){
 		int insertedBombs = 0;
 		int conflicts = 0;
-		int bombQuantity = lines+columns*difficulty;
+		int bombQuantity = (lines+columns)*difficulty;
 		
 		Random randGenerator = new Random();
 		
@@ -213,7 +214,7 @@ public class Main extends MatrixUtil{
 			}
 		}
 		
-		//Atualiza a janela com o jogo pronto
+		//Atualiza a janela com o campo minado
 		Window.showField(mapper[0].length);
 		
 	}

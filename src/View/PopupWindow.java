@@ -16,7 +16,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-public class popupWindow extends JPanel implements ActionListener {
+public class PopupWindow extends JPanel implements ActionListener {
 	private static final long serialVersionUID = -5427647397840827953L;
 	
 	public static JLabel lines = new JLabel("Lines", SwingConstants.LEFT);
@@ -32,7 +32,7 @@ public class popupWindow extends JPanel implements ActionListener {
 	
 	public static JFrame popupSizeWindow = new JFrame("Configurations");
 	
-	protected popupWindow() {
+	protected PopupWindow() {
 		JPanel panel = new JPanel(null);
 		difficultyEasy.addActionListener(this);
 		difficultyEasy.setActionCommand("setEasy");
@@ -61,7 +61,7 @@ public class popupWindow extends JPanel implements ActionListener {
 		difficultyEasy.setForeground(Color.BLACK);
 		difficultyIntermediary.setForeground(Color.BLACK);
 		difficultyHard.setForeground(Color.BLACK);
-		startButton.setBounds(190, 95, 100, 20);
+		startButton.setBounds(185, 90, 100, 20);
 		
 		/* Adiciona no painel */
 		panel.add(linesValue);
@@ -110,7 +110,7 @@ public class popupWindow extends JPanel implements ActionListener {
 				
 				Main.generateField();
 
-				popupWindow.popupSizeWindow.dispose();
+				PopupWindow.popupSizeWindow.dispose();
 				Window.window.setEnabled(true);
 				Window.gameMenu.setEnabled(true);
 			}

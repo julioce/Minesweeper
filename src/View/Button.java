@@ -25,7 +25,12 @@ public class Button extends JButton {
 		this.setBounds(j*buttonWidth, i*buttonHeight, buttonWidth, buttonHeight);
 		this.setMargin(new Insets(1,1,1,1)); 
 		this.setFont(new Font("Arial", Font.BOLD, 12));
+		this.setValue(value);
 		
+		Window.panel.add(this);
+	}
+	
+	public void setValue(int value){
 		switch(value){
 			case 0:
 				this.setText(" ");
@@ -38,8 +43,7 @@ public class Button extends JButton {
 				this.setForeground(array[value]);
 				break;
 		}
-		
-		Window.panel.add(this);
+	
 	}
 
 }

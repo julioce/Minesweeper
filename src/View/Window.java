@@ -25,11 +25,11 @@ public class Window extends JPanel implements ActionListener {
 	/* Cria tudo: Janela, menu, label, botão... */
 	public static JFrame window = new JFrame("IA - Campo Minado");
 	public static JPanel panel = new JPanel(null);
+	public static PopupWindow popupWindow;
 	
 	public static JMenuBar menu = new JMenuBar();
 	public static JMenu gameMenu = new JMenu("Game");
 	public static JMenuItem gameExit = new JMenuItem("Exit");
-	
 
 	public Window(){
 		/* Pega o Look and Feel do OS nativo */
@@ -69,13 +69,12 @@ public class Window extends JPanel implements ActionListener {
 		gameMenu.setEnabled(false);
 		window.setEnabled(false);
 		
-		@SuppressWarnings("unused")
-		popupWindow popupWindow = new popupWindow();
+		/* Abre a janela de configuração */
+		popupWindow = new PopupWindow();
 	}
 	
-	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		/* saída do jogo */
+		/* Saída do jogo */
 		if(arg0.getActionCommand().equals("exit")) {
 			System.exit(0);
 		}
