@@ -6,33 +6,14 @@ import java.util.Random;
 import View.Button;
 import View.Window;
 
-public class Main extends MatrixUtil{
-	static ArrayList<MatrixPosition> bombPosition;
-	static int lines;
-	static int columns;
-	static int difficulty;
-	static int bombQuantity;
-	
-	static Window view;
-	
-	public static void main(String[] args) {
-		/* Inicializa a GUI */
-		view = new Window();
-	}
-	
-	public static void generateField(){
+public class Field extends MatrixUtil{
+	public static ArrayList<MatrixPosition> bombPosition;
+	public static int lines;
+	public static int columns;
+	public static int difficulty;
+	public static int bombQuantity;
 
-		int mapper[][] = new int[lines][columns];
-		bombPosition = new ArrayList<MatrixPosition>();
-		
-		setUpMap(mapper);
-		generateBombs(mapper);
-		validateBombSpaces(mapper);
-		evaluateMap(mapper);
-		printGame(mapper);
-	}
-	
-	private static void evaluateMap(int[][] mapper) {
+	public static void evaluateMap(int[][] mapper) {
 		int values[] = {0, 0, 0, 0, 0, 0, 0, 0};
 		double evaluationGrade = 0;
 		
@@ -82,7 +63,7 @@ public class Main extends MatrixUtil{
 
 	public static void setUpMap(int mapper[][]){
 		for (int i=0; i< mapper.length; i++){
-			for(int j= 0; j < mapper[0].length; j++){
+			for(int j=0; j < mapper[0].length; j++){
 				mapper[i][j] = 0;
 			}
 		}
@@ -95,7 +76,7 @@ public class Main extends MatrixUtil{
 		
 		Random randGenerator = new Random();
 		
-		for(int i =0; i < bombQuantity; i++){
+		for(int i=0; i < bombQuantity; i++){
 			
 			int randLine = randGenerator.nextInt() % mapper.length;
 			if(randLine < 0){
@@ -119,7 +100,6 @@ public class Main extends MatrixUtil{
 			}else{
 				i--;
 				conflicts++;
-				
 			}
 		}
 		
@@ -242,15 +222,6 @@ public class Main extends MatrixUtil{
 		}
 		
 		return mapPositionAndFieldValue;
-	}
-
-	public static void setSize(int linesValue, int columnsValue) {
-		lines = linesValue;
-		columns = columnsValue;
-	}
-
-	public static void setDifficulty(int i) {
-		difficulty = i;
 	}
 
 }

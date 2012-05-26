@@ -1,5 +1,5 @@
 package View;
-import Model.Main;
+import Controller.Main;
 
 import java.awt.Color;
 import java.awt.Dimension;
