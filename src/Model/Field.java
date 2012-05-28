@@ -72,7 +72,6 @@ public class Field extends MatrixUtil{
 	public static void generateBombs(int mapper[][]){
 		int insertedBombs = 0;
 		int conflicts = 0;
-		int bombQuantity = (lines+columns)*difficulty;
 		
 		Random randGenerator = new Random();
 		

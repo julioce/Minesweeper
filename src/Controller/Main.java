@@ -37,4 +37,8 @@ public class Main {
 		Field.difficulty = i;
 	}
 
+	public static void setBombQuantity(int bombs) {
+		Field.bombQuantity = bombs;
+	}
+
 }

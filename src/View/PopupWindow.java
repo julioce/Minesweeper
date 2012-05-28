@@ -24,6 +24,9 @@ public class PopupWindow extends JPanel implements ActionListener {
 	public static JTextField columnsValue = new JTextField();
 	public static JButton startButton = new JButton("Start");
 	
+	public static JLabel bombQuantity = new JLabel("Bombs", SwingConstants.LEFT);
+	public static JTextField bombQuantityValue = new JTextField();
+	
 	public static ButtonGroup difficultyTypes = new ButtonGroup();
 	public static JRadioButton difficultyEasy = new JRadioButton("Easy");
 	public static JRadioButton difficultyIntermediary = new JRadioButton("Intermediary");
@@ -52,11 +55,15 @@ public class PopupWindow extends JPanel implements ActionListener {
 		/* Posiciona os itens */
 		lines.setBounds(10, 10, 80, 20);
 		columns.setBounds(10, 30, 80, 20);
-		linesValue.setBounds(90, 10, 80, 20);
-		columnsValue.setBounds(90, 30, 80, 20);
-		difficultyEasy.setBounds(10, 55, 80, 20);
-		difficultyIntermediary.setBounds(10, 75, 120, 20);
-		difficultyHard.setBounds(10, 95, 80, 20);
+		linesValue.setBounds(90, 10, 60, 20);
+		columnsValue.setBounds(90, 30, 60, 20);
+		bombQuantity.setBounds(10, 50, 80, 20);
+		bombQuantityValue.setBounds(90, 50, 60, 20);
+		
+		difficultyEasy.setBounds(10, 75, 80, 20);
+		difficultyIntermediary.setBounds(10, 95, 120, 20);
+		difficultyHard.setBounds(10, 115, 80, 20);
+		
 		startButton.setBounds(185, 90, 100, 20);
 		
 		/* Adiciona no painel */
@@ -64,6 +71,8 @@ public class PopupWindow extends JPanel implements ActionListener {
 		panel.add(columnsValue);
 		panel.add(lines);
 		panel.add(columns);
+		panel.add(bombQuantity);
+		panel.add(bombQuantityValue);
 		panel.add(difficultyEasy);
 		panel.add(difficultyIntermediary);
 		panel.add(difficultyHard);
@@ -73,7 +82,7 @@ public class PopupWindow extends JPanel implements ActionListener {
 		popupSizeWindow.add(panel);
 		popupSizeWindow.setLocationRelativeTo(Window.window);
 		popupSizeWindow.setLocation(Window.WIDTH/4, Window.HEIGHT/4);
-		popupSizeWindow.setPreferredSize(new Dimension(300, 140));
+		popupSizeWindow.setPreferredSize(new Dimension(300, 150));
 		popupSizeWindow.setResizable(false);
 		popupSizeWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		popupSizeWindow.pack();
@@ -85,8 +94,10 @@ public class PopupWindow extends JPanel implements ActionListener {
 		try {
 			int lines = Integer.parseInt(linesValue.getText());
 			int columns = Integer.parseInt(columnsValue.getText());
+			int bombs = Integer.parseInt(bombQuantityValue.getText());
+			int size = lines*columns;
 			
-			if(arg0.getActionCommand().equals("start") && lines > 6 && columns > 6) {
+			if(arg0.getActionCommand().equals("start") && lines > 0 && columns > 0 && bombs > 0 && bombs < size) {
 				
 				/* Configura as linhas e colunas */
 				Main.setSize(lines, columns);
@@ -103,6 +114,9 @@ public class PopupWindow extends JPanel implements ActionListener {
 				}else{
 					Main.setDifficulty(1);
 				}
+				
+				/* Configura o número de bombas */
+				Main.setBombQuantity(bombs);
 				
 				Main.generateField();
 
