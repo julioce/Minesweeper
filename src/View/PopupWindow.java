@@ -1,7 +1,6 @@
 package View;
 import Controller.Main;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -26,9 +25,9 @@ public class PopupWindow extends JPanel implements ActionListener {
 	public static JButton startButton = new JButton("Start");
 	
 	public static ButtonGroup difficultyTypes = new ButtonGroup();
-	public static JRadioButtonMenuItem difficultyEasy = new JRadioButtonMenuItem("Easy");
-	public static JRadioButtonMenuItem difficultyIntermediary = new JRadioButtonMenuItem("Intermediary");
-	public static JRadioButtonMenuItem difficultyHard = new JRadioButtonMenuItem("Hard");
+	public static JRadioButton difficultyEasy = new JRadioButton("Easy");
+	public static JRadioButton difficultyIntermediary = new JRadioButton("Intermediary");
+	public static JRadioButton difficultyHard = new JRadioButton("Hard");
 	
 	public static JFrame popupSizeWindow = new JFrame("Configurations");
 	
@@ -58,9 +57,6 @@ public class PopupWindow extends JPanel implements ActionListener {
 		difficultyEasy.setBounds(10, 55, 80, 20);
 		difficultyIntermediary.setBounds(10, 75, 120, 20);
 		difficultyHard.setBounds(10, 95, 80, 20);
-		difficultyEasy.setForeground(Color.BLACK);
-		difficultyIntermediary.setForeground(Color.BLACK);
-		difficultyHard.setForeground(Color.BLACK);
 		startButton.setBounds(185, 90, 100, 20);
 		
 		/* Adiciona no painel */
@@ -77,7 +73,7 @@ public class PopupWindow extends JPanel implements ActionListener {
 		popupSizeWindow.add(panel);
 		popupSizeWindow.setLocationRelativeTo(Window.window);
 		popupSizeWindow.setLocation(Window.WIDTH/4, Window.HEIGHT/4);
-		popupSizeWindow.setPreferredSize(new Dimension(300, 120));
+		popupSizeWindow.setPreferredSize(new Dimension(300, 140));
 		popupSizeWindow.setResizable(false);
 		popupSizeWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		popupSizeWindow.pack();

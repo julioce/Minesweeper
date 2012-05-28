@@ -18,7 +18,7 @@ public class Field extends MatrixUtil{
 		double evaluationGrade = 0;
 		
 		for (int i=0; i< mapper.length; i++){
-			for(int j= 0; j < mapper[0].length; j++){
+			for(int j=0; j < mapper[0].length; j++){
 				switch (mapper[i][j]) {
 				case 1:
 					values[0]++; 
@@ -188,7 +188,7 @@ public class Field extends MatrixUtil{
 
 	public static void printGame(int mapper[][]){
 		for (int i=0; i < mapper.length; i++){
-			for(int j= 0; j < mapper[0].length ; j++){
+			for(int j=0; j < mapper[0].length ; j++){
 				// Gera os botões da janela
 				new Button(i, j, mapper[i][j]);
 			}
