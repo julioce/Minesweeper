@@ -1,5 +1,6 @@
 package View;
 import Controller.Main;
+import Model.Field;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -95,9 +96,8 @@ public class PopupWindow extends JPanel implements ActionListener {
 			int lines = Integer.parseInt(linesValue.getText());
 			int columns = Integer.parseInt(columnsValue.getText());
 			int bombs = Integer.parseInt(bombQuantityValue.getText());
-			int size = lines*columns;
 			
-			if(arg0.getActionCommand().equals("start") && lines > 0 && columns > 0 && bombs > 0 && bombs < size) {
+			if(arg0.getActionCommand().equals("start") && Field.validateUserInput(lines, columns, bombs)) {
 				
 				/* Configura as linhas e colunas */
 				Main.setSize(lines, columns);

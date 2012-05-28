@@ -205,6 +205,14 @@ public class Field extends MatrixUtil{
 		}
 	}
 	
+	public static boolean validateUserInput(int lines, int columns, int bombs){
+		if(lines > 0 && columns > 0 && bombs > 0 && bombs < lines*columns){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	public static HashMap<MatrixPosition, Integer> GetLocalMap(int[][] mapper, MatrixPosition pos, int range){
 		
 		HashMap<MatrixPosition, Integer> mapPositionAndFieldValue = new HashMap<MatrixPosition, Integer>();
