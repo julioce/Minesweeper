@@ -17,8 +17,8 @@ public class Field extends MatrixUtil{
 		int values[] = {0, 0, 0, 0, 0, 0, 0, 0};
 		double evaluationGrade = 0;
 		
-		for (int i=0; i< mapper.length; i++){
-			for(int j=0; j < mapper[0].length; j++){
+		for (int i=0; i< lines; i++){
+			for(int j=0; j < columns; j++){
 				switch (mapper[i][j]) {
 				case 1:
 					values[0]++; 
@@ -62,8 +62,8 @@ public class Field extends MatrixUtil{
 	}
 
 	public static void setUpMap(int mapper[][]){
-		for (int i=0; i< mapper.length; i++){
-			for(int j=0; j < mapper[0].length; j++){
+		for (int i=0; i<lines; i++){
+			for(int j=0; j <columns; j++){
 				mapper[i][j] = 0;
 			}
 		}
@@ -77,12 +77,12 @@ public class Field extends MatrixUtil{
 		
 		for(int i=0; i < bombQuantity; i++){
 			
-			int randLine = randGenerator.nextInt() % mapper.length;
+			int randLine = randGenerator.nextInt() % lines;
 			if(randLine < 0){
 				randLine*=-1;
 			}
 			
-			int randColumn = randGenerator.nextInt() % mapper[0].length;
+			int randColumn = randGenerator.nextInt() % columns;
 			if(randColumn < 0){
 				randColumn*=-1;
 			}
@@ -106,7 +106,7 @@ public class Field extends MatrixUtil{
 		System.out.println("Inserted bombs = " + insertedBombs);
 	}
 	
-	public static void UpdateNearFields(int mapper[][],MatrixPosition pos){
+	public static void UpdateNearFields(int mapper[][], MatrixPosition pos){
 		int newPosX = 0;
 		int newPosY = 0;
 
@@ -186,15 +186,15 @@ public class Field extends MatrixUtil{
 	}
 
 	public static void printGame(int mapper[][]){
-		for (int i=0; i < mapper.length; i++){
-			for(int j=0; j < mapper[0].length ; j++){
+		for (int i=0; i < lines; i++){
+			for(int j=0; j < columns ; j++){
 				// Gera os botões da janela
 				new Button(i, j, mapper[i][j]);
 			}
 		}
 		
 		//Atualiza a janela com o campo minado
-		Window.showField(mapper[0].length);
+		Window.showField(lines, columns);
 		
 	}
 	

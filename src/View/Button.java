@@ -22,7 +22,7 @@ public class Button extends JButton {
 		this.i = i;
 		this.j = j;
 		
-		this.setBounds(j*buttonWidth, i*buttonHeight, buttonWidth, buttonHeight);
+		this.setBounds(i*buttonWidth, j*buttonHeight, buttonWidth, buttonHeight);
 		this.setMargin(new Insets(1,1,1,1)); 
 		this.setFont(new Font("Arial", Font.BOLD, 12));
 		this.setValue(value);

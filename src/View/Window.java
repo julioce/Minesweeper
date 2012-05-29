@@ -81,8 +81,8 @@ public class Window extends JPanel implements ActionListener {
 		
 	}
 
-	public static void showField(int length) {
-		window.setSize(new Dimension((length-1)*Button.buttonWidth+30, (length-1)*Button.buttonHeight+80));
+	public static void showField(int width, int height) {
+		window.setSize(new Dimension((width-1)*Button.buttonWidth+30, (height-1)*Button.buttonHeight+80));
 		window.add(Window.panel);
 	}
 

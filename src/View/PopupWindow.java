@@ -33,9 +33,11 @@ public class PopupWindow extends JPanel implements ActionListener {
 	public static JRadioButton difficultyIntermediary = new JRadioButton("Intermediary");
 	public static JRadioButton difficultyHard = new JRadioButton("Hard");
 	
-	public static JFrame popupSizeWindow = new JFrame("Configurations");
+	public static JFrame popupWindow = new JFrame("Configurations");
 	
-	protected PopupWindow() {
+	static AlertWindow alertWindow;
+	
+	public PopupWindow() {
 		JPanel panel = new JPanel(null);
 		difficultyEasy.addActionListener(this);
 		difficultyEasy.setActionCommand("setEasy");
@@ -80,14 +82,14 @@ public class PopupWindow extends JPanel implements ActionListener {
 		panel.add(startButton);
 		
 		/* Configura a janela */
-		popupSizeWindow.add(panel);
-		popupSizeWindow.setLocationRelativeTo(Window.window);
-		popupSizeWindow.setLocation(Window.WIDTH/4, Window.HEIGHT/4);
-		popupSizeWindow.setPreferredSize(new Dimension(300, 150));
-		popupSizeWindow.setResizable(false);
-		popupSizeWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		popupSizeWindow.pack();
-		popupSizeWindow.setVisible(true);
+		popupWindow.add(panel);
+		popupWindow.setLocationRelativeTo(Window.window);
+		popupWindow.setLocation(Window.WIDTH/4, Window.HEIGHT/4);
+		popupWindow.setPreferredSize(new Dimension(300, 150));
+		popupWindow.setResizable(false);
+		popupWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		popupWindow.pack();
+		popupWindow.setVisible(true);
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
@@ -97,34 +99,43 @@ public class PopupWindow extends JPanel implements ActionListener {
 			int columns = Integer.parseInt(columnsValue.getText());
 			int bombs = Integer.parseInt(bombQuantityValue.getText());
 			
-			if(arg0.getActionCommand().equals("start") && Field.validateUserInput(lines, columns, bombs)) {
+			if(arg0.getActionCommand().equals("start")) {
 				
-				/* Configura as linhas e colunas */
-				Main.setSize(lines, columns);
-				
-				/* Configura a dificuldade */
-				String difficultyType = difficultyTypes.getSelection().getActionCommand();
-				
-				if(difficultyType == "setEasy") {
-					Main.setDifficulty(1);
-				}else if(difficultyType == "setIntermediary"){
-					Main.setDifficulty(2);
-				}else if(difficultyType == "setHard"){
-					Main.setDifficulty(3);
+				if(Field.validateUserInput(lines, columns, bombs)){
+					/* Configura as linhas e colunas */
+					Main.setSize(lines, columns);
+					
+					/* Configura a dificuldade */
+					String difficultyType = difficultyTypes.getSelection().getActionCommand();
+					
+					if(difficultyType == "setEasy"){
+						Main.setDifficulty(1);
+					}else if(difficultyType == "setIntermediary"){
+						Main.setDifficulty(2);
+					}else if(difficultyType == "setHard"){
+						Main.setDifficulty(3);
+					}else{
+						Main.setDifficulty(1);
+					}
+					
+					/* Configura o número de bombas */
+					Main.setBombQuantity(bombs);
+					
+					/* Gera o campo */
+					Main.generateField();
+
+					/* Configura as janelas */
+					PopupWindow.popupWindow.dispose();
+					Window.window.setEnabled(true);
+					Window.gameMenu.setEnabled(true);
 				}else{
-					Main.setDifficulty(1);
+					alertWindow = new AlertWindow();
 				}
 				
-				/* Configura o número de bombas */
-				Main.setBombQuantity(bombs);
 				
-				Main.generateField();
-
-				PopupWindow.popupSizeWindow.dispose();
-				Window.window.setEnabled(true);
-				Window.gameMenu.setEnabled(true);
 			}
 		} catch (Exception e) {
+			alertWindow = new AlertWindow();
 		}
 		
 	}
