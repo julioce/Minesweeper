@@ -19,8 +19,11 @@ public class Field extends MatrixUtil{
 		int values[] = {0, 0, 0, 0, 0, 0, 0, 0};
 		double evaluationGrade = 0;
 		
-		for (int i=0; i< lines; i++){
-			for(int j=0; j < columns; j++){
+		int nLines = mapper.length;
+		int nColumns = mapper[0].length;
+		
+		for (int i=0; i< nLines; i++){
+			for(int j=0; j < nColumns; j++){
 				switch (mapper[i][j]) {
 				case 1:
 					values[0]++; 
@@ -58,7 +61,7 @@ public class Field extends MatrixUtil{
 			evaluationGrade += values[i];
 		}
 		
-		evaluationGrade = evaluationGrade/(lines*columns);
+		evaluationGrade = evaluationGrade/(nColumns*nColumns);
 		
 		System.out.println("Difficulty evaluation = " + evaluationGrade);
 	}
@@ -319,10 +322,10 @@ public class Field extends MatrixUtil{
 	}
 	
 	public static void printGameInConsole(int mapper[][]){
-		for (int i=0; i < lines; i++)
+		for (int i=0; i < mapper.length; i++)
 		{
 			System.out.print("[");
-			for(int j=0; j < columns ; j++)
+			for(int j=0; j < mapper[0].length ; j++)
 			{
 				System.out.print(" "+ mapper[i][j] + " ");
 			} 
@@ -373,13 +376,14 @@ public class Field extends MatrixUtil{
 		
 		for (NearPositionEnum nearEnum : NearPositionEnum.values()) {			
 			if(isNearValid(mapper, pos, nearEnum)){
-				//nextPos = new MatrixPosition(pos.X + nearEnum.x, pos.Y + nearEnum.y);
-				//mapPositionAndFieldValue.put(nextPos, mapper[nextPos.X][nextPos.Y]);
+				localMapper[1 + nearEnum.x][ 1 + nearEnum.y] = mapper[pos.X + nearEnum.x][pos.Y + nearEnum.y];
+			}
+			else
+			{
+				localMapper[1 + nearEnum.x][ 1 + nearEnum.y] = 0;
 			}
 			
-		}
-		
-		
+		}	
 		
 		return localMapper;
 				
