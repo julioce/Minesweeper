@@ -32,16 +32,16 @@ public class Main {
 		//fazendo a avaliação das densidades das bombas
 		//Field.printGameInConsole(mapper);
 		
-		//testando a remocao de bombas
-		if(Field.removeBomb(mapper, Field.bombPosition.get(1)))
-			System.out.println("Removi a bomba de posicao "+Field.bombPosition.get(1).getX() +" " + Field.bombPosition.get(1).getY());
-		
-		if(Field.removeBomb(mapper, Field.bombPosition.get(4)))
-			System.out.println("Removi a bomba de posicao "+Field.bombPosition.get(4).getX() +" " + Field.bombPosition.get(4).getY());
-		
-		if(Field.removeBomb(mapper, Field.bombPosition.get(6)))
-			System.out.println("Removi a bomba de posicao "+Field.bombPosition.get(6).getX() +" " + Field.bombPosition.get(6).getY());
-		
+//		//testando a remocao de bombas
+//		if(Field.removeBomb(mapper, Field.bombPosition.get(1)))
+//			System.out.println("Removi a bomba de posicao "+Field.bombPosition.get(1).getX() +" " + Field.bombPosition.get(1).getY());
+//		
+//		if(Field.removeBomb(mapper, Field.bombPosition.get(4)))
+//			System.out.println("Removi a bomba de posicao "+Field.bombPosition.get(4).getX() +" " + Field.bombPosition.get(4).getY());
+//		
+//		if(Field.removeBomb(mapper, Field.bombPosition.get(6)))
+//			System.out.println("Removi a bomba de posicao "+Field.bombPosition.get(6).getX() +" " + Field.bombPosition.get(6).getY());
+//		
 		//Field.printGameInConsole(mapper);
 		
 		Field.printGame(mapper);
