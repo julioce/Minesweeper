@@ -11,8 +11,10 @@ public class Main {
 
 	static Window view;
 	
-	static int mapper[][];
+	public static int mapper[][];
 
+	public static int blankMapper[][];
+	
 	public static void main(String[] args) {
 		/* Inicializa a GUI */
 		view = new Window();
@@ -21,13 +23,19 @@ public class Main {
 	public static void generateField() {
 
 		mapper = new int[Field.lines][Field.columns];
+		blankMapper = new int[Field.lines][Field.columns];
+		
 		Field.bombPosition = new ArrayList<MatrixPosition>();
 		
 		Field.setUpMap(mapper);
+		Field.setUpBlankMap(blankMapper);
 		Field.generateBombs(mapper);
-		Field.validateBombSpaces(mapper);
+		Field.populateBlankMap(mapper, blankMapper);
+		Field.printGameInConsole(blankMapper);
+		
+		//Field.validateBombSpaces(mapper);
 		Field.evaluateMap(mapper);
-		mapper = Field.localSearch(mapper);
+		//mapper = Field.localSearch(mapper);
 		Field.printGame(mapper);
 	}
 	

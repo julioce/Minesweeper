@@ -72,12 +72,44 @@ public class Field extends MatrixUtil{
 		}
 	}
 	
+	public static void setUpBlankMap(int blankMapper[][]){
+		for (int i=0; i<blankMapper.length; i++){
+			for(int j=0; j <blankMapper[0].length; j++){
+				int qtOfBlanks = 8;
+				if((i == 0) || (i == blankMapper.length - 1))
+				{
+					if(j == 0 || (j == blankMapper[0].length - 1))
+					{
+						qtOfBlanks = 3;
+					}
+					else
+					{
+						qtOfBlanks = 5;
+					}
+				}
+				else if((j == 0) || (j == blankMapper[0].length - 1))
+				{
+					if(i == 0 || (i == blankMapper.length - 1))
+					{
+						qtOfBlanks = 3;
+					}
+					else
+					{
+						qtOfBlanks = 5;
+					}
+				}
+
+				blankMapper[i][j] = qtOfBlanks;
+			}
+		}
+	}
+	
 	public static void generateBombs(int mapper[][]){
 		int insertedBombs = 0;
 		int conflicts = 0;
 		
 		Random randGenerator = new Random();
-		
+
 		for(int i=0; i < bombQuantity; i++){
 			
 			int randLine = randGenerator.nextInt() % lines;
@@ -99,7 +131,8 @@ public class Field extends MatrixUtil{
 				insertedBombs ++;
 				MatrixPosition pos = new MatrixPosition(randLine, randColumn);
 				UpdateNearFields(mapper,pos,true);
-			}else{
+			}
+			else{
 				i--;
 				conflicts++;
 			}
@@ -108,13 +141,28 @@ public class Field extends MatrixUtil{
 		System.out.println("Bomb space conflicts = " + conflicts);
 		System.out.println("Inserted bombs = " + insertedBombs);
 	}
-	
-	public static int[][] removeBomb(int mapper[][], MatrixPosition pos)
+
+	public static void populateBlankMap(int mapper[][],int blankMapper[][])
 	{
-		if(mapper[pos.X][pos.Y] == -1)
+		for (int i=0; i < lines; i++){
+			for(int j=0; j < columns ; j++){
+				// Gera os botões da janela
+				if(mapper[i][j] != 0)
+				{
+					UpdateNearFieldsInBlankMap(blankMapper, i, j);
+				}
+			}
+		}
+	}
+	
+	public static int[][] removeBomb(int[][] mapper, MatrixPosition pos)
+	{
+		mapper[pos.X][pos.Y] = 0;
+		UpdateNearFields(mapper, pos, false);
+		if (bombPosition.contains(pos))
 		{
-			mapper[pos.X][pos.Y] = 0;
-			UpdateNearFields(mapper, pos, false);
+			System.out.println("achei");
+			bombPosition.remove(pos);
 		}
 		
 		return mapper;
@@ -126,7 +174,6 @@ public class Field extends MatrixUtil{
 		
 		//1 - UP - subo em x
 		if(isNearValid(mapper, pos, NearPositionEnum.N)){
-			
 			newPosX = pos.X + NearPositionEnum.N.x;
 			newPosY = pos.Y + NearPositionEnum.N.y;
 			if(mapper[newPosX][newPosY] != -1){
@@ -135,9 +182,7 @@ public class Field extends MatrixUtil{
 				else
 				{
 					if(mapper[newPosX][newPosY] > 0)
-					{
-						mapper[newPosX][newPosY]--;
-					}
+						mapper[newPosX][newPosY]--;	
 				}
 			}
 			else
@@ -151,15 +196,14 @@ public class Field extends MatrixUtil{
 			
 			newPosX = pos.X + NearPositionEnum.NE.x;
 			newPosY = pos.Y  + NearPositionEnum.NE.y;
+
 			if(mapper[newPosX][newPosY] != -1){
 				if(isInserted)
 					mapper[newPosX][newPosY]++;
 				else
 				{
 					if(mapper[newPosX][newPosY] > 0)
-					{
-						mapper[newPosX][newPosY]--;
-					}
+						mapper[newPosX][newPosY]--;	
 				}
 			}
 			else
@@ -173,15 +217,15 @@ public class Field extends MatrixUtil{
 			
 			newPosX = pos.X + NearPositionEnum.E.x;
 			newPosY = pos.Y  + NearPositionEnum.E.y;
+
 			if(mapper[newPosX][newPosY] != -1){
 				if(isInserted)
 					mapper[newPosX][newPosY]++;
 				else
 				{
 					if(mapper[newPosX][newPosY] > 0)
-					{
 						mapper[newPosX][newPosY]--;
-					}
+					
 				}
 			}
 			else
@@ -195,15 +239,14 @@ public class Field extends MatrixUtil{
 			
 			newPosX = pos.X + NearPositionEnum.SE.x;
 			newPosY = pos.Y  + NearPositionEnum.SE.y;
+
 			if(mapper[newPosX][newPosY] != -1){
 				if(isInserted)
 					mapper[newPosX][newPosY]++;
 				else
 				{
 					if(mapper[newPosX][newPosY] > 0)
-					{
-						mapper[newPosX][newPosY]--;
-					}
+						mapper[newPosX][newPosY]--;	
 				}
 			}
 			else
@@ -217,15 +260,57 @@ public class Field extends MatrixUtil{
 			
 			newPosX = pos.X + NearPositionEnum.S.x;
 			newPosY = pos.Y  + NearPositionEnum.S.y;
+
 			if(mapper[newPosX][newPosY] != -1){
 				if(isInserted)
 					mapper[newPosX][newPosY]++;
 				else
 				{
 					if(mapper[newPosX][newPosY] > 0)
-					{
+						mapper[newPosX][newPosY]--;	
+				}
+			}
+			else
+			{
+				if(!isInserted)
+					mapper[pos.X][pos.Y]++;
+			}
+		}
+		//6 - DOWN - LEFT
+		if(isNearValid(mapper, pos, NearPositionEnum.SW)){
+			
+			newPosX = pos.X + NearPositionEnum.SW.x;
+			newPosY = pos.Y  + NearPositionEnum.SW.y;
+
+			if(mapper[newPosX][newPosY] != -1){
+				if(isInserted)
+					mapper[newPosX][newPosY]++;
+				else
+				{
+					if(mapper[newPosX][newPosY] > 0)
+						mapper[newPosX][newPosY]--;	
+				}
+			}
+			else
+			{
+				if(!isInserted)
+					mapper[pos.X][pos.Y]++;
+			}
+		
+		}
+		//7 - LEFT
+		if(isNearValid(mapper, pos, NearPositionEnum.W)){
+			
+			newPosX = pos.X + NearPositionEnum.W.x;
+			newPosY = pos.Y  + NearPositionEnum.W.y;
+
+			if(mapper[newPosX][newPosY] != -1){
+				if(isInserted)
+					mapper[newPosX][newPosY]++;
+				else
+				{
+					if(mapper[newPosX][newPosY] > 0)
 						mapper[newPosX][newPosY]--;
-					}
 				}
 			}
 			else
@@ -235,64 +320,19 @@ public class Field extends MatrixUtil{
 			}
 		}
 		
-		//6 - DOWN - LEFT
-		if(isNearValid(mapper, pos, NearPositionEnum.SW)){
-			
-			newPosX = pos.X + NearPositionEnum.SW.x;
-			newPosY = pos.Y  + NearPositionEnum.SW.y;
-			if(mapper[newPosX][newPosY] != -1){
-				if(isInserted)
-					mapper[newPosX][newPosY]++;
-				else
-				{
-					if(mapper[newPosX][newPosY] > 0)
-					{
-						mapper[newPosX][newPosY]--;
-					}
-				}
-			}
-			else
-			{
-				if(!isInserted)
-					mapper[pos.X][pos.Y]++;
-			}
-		}
-		//7 - LEFT
-		if(isNearValid(mapper, pos, NearPositionEnum.W)){
-			
-			newPosX = pos.X + NearPositionEnum.W.x;
-			newPosY = pos.Y  + NearPositionEnum.W.y;
-			if(mapper[newPosX][newPosY] != -1){
-				if(isInserted)
-					mapper[newPosX][newPosY]++;
-				else
-				{
-					if(mapper[newPosX][newPosY] > 0)
-					{
-						mapper[newPosX][newPosY]--;
-					}
-				}
-			}
-			else
-			{
-				if(!isInserted)
-					mapper[pos.X][pos.Y]++;
-			}
-		}
 		//8 - LEFT - UP
 		if(isNearValid(mapper, pos, NearPositionEnum.NW)){
 			
 			newPosX = pos.X + NearPositionEnum.NW.x;
 			newPosY = pos.Y  + NearPositionEnum.NW.y;
+
 			if(mapper[newPosX][newPosY] != -1){
 				if(isInserted)
 					mapper[newPosX][newPosY]++;
 				else
 				{
 					if(mapper[newPosX][newPosY] > 0)
-					{
 						mapper[newPosX][newPosY]--;
-					}
 				}
 			}
 			else
@@ -301,8 +341,85 @@ public class Field extends MatrixUtil{
 					mapper[pos.X][pos.Y]++;
 			}
 		}
+		
 	}
 
+	public static void UpdateNearFieldsInBlankMap(int blankMapper[][], MatrixPosition pos){
+		int newPosX = 0;
+		int newPosY = 0;
+		
+		//1 - UP - subo em x
+		if(isNearValid(blankMapper, pos, NearPositionEnum.N)){
+			newPosX = pos.X + NearPositionEnum.N.x;
+			newPosY = pos.Y + NearPositionEnum.N.y;
+			if(blankMapper[newPosX][newPosY] > 0)
+				blankMapper[newPosX][newPosY]--;
+			
+		}
+		//2 - UP, RIGHT
+		if(isNearValid(blankMapper, pos, NearPositionEnum.NE)){
+			newPosX = pos.X + NearPositionEnum.NE.x;
+			newPosY = pos.Y  + NearPositionEnum.NE.y;
+			if(blankMapper[newPosX][newPosY] > 0)
+				blankMapper[newPosX][newPosY]--;
+			
+		}
+		//3 - RIGHT
+		if(isNearValid(blankMapper, pos, NearPositionEnum.E)){
+			newPosX = pos.X + NearPositionEnum.E.x;
+			newPosY = pos.Y  + NearPositionEnum.E.y;
+			if(blankMapper[newPosX][newPosY] > 0)
+				blankMapper[newPosX][newPosY]--;
+			
+		}		
+		//4 - RIGHT - DOWN	
+		if(isNearValid(blankMapper, pos, NearPositionEnum.SE)){
+			newPosX = pos.X + NearPositionEnum.SE.x;
+			newPosY = pos.Y  + NearPositionEnum.SE.y;
+			if(blankMapper[newPosX][newPosY] > 0)
+				blankMapper[newPosX][newPosY]--;
+			
+		}
+		//5 - DOWN
+		if(isNearValid(blankMapper, pos, NearPositionEnum.S)){
+			newPosX = pos.X + NearPositionEnum.S.x;
+			newPosY = pos.Y  + NearPositionEnum.S.y;
+			if(blankMapper[newPosX][newPosY] > 0)
+				blankMapper[newPosX][newPosY]--;
+			
+		}
+		//6 - DOWN - LEFT
+		if(isNearValid(blankMapper, pos, NearPositionEnum.SW)){
+			newPosX = pos.X + NearPositionEnum.SW.x;
+			newPosY = pos.Y  + NearPositionEnum.SW.y;
+			if(blankMapper[newPosX][newPosY] > 0)
+				blankMapper[newPosX][newPosY]--;
+			
+		}
+		//7 - LEFT
+		if(isNearValid(blankMapper, pos, NearPositionEnum.W)){
+			newPosX = pos.X + NearPositionEnum.W.x;
+			newPosY = pos.Y  + NearPositionEnum.W.y;
+			if(blankMapper[newPosX][newPosY] > 0)
+				blankMapper[newPosX][newPosY]--;
+			
+		}
+		
+		//8 - LEFT - UP
+		if(isNearValid(blankMapper, pos, NearPositionEnum.NW)){
+			newPosX = pos.X + NearPositionEnum.NW.x;
+			newPosY = pos.Y  + NearPositionEnum.NW.y;
+			if(blankMapper[newPosX][newPosY] > 0)
+				blankMapper[newPosX][newPosY]--;
+			
+		}
+	}
+	
+	public static void UpdateNearFieldsInBlankMap(int blankMapper[][],int x, int y){
+		UpdateNearFieldsInBlankMap(blankMapper,new MatrixPosition(x, y));
+	}
+	
+		
 	public static void printGame(int mapper[][]){
 		for (int i=0; i < lines; i++){
 			for(int j=0; j < columns ; j++){
@@ -317,12 +434,12 @@ public class Field extends MatrixUtil{
 	}
 	
 	public static void printGameInConsole(int mapper[][]){
-		for (int i=0; i < mapper.length; i++)
+		for (int i=0; i < mapper[0].length; i++)
 		{
 			System.out.print("[");
-			for(int j=0; j < mapper[0].length ; j++)
+			for(int j=0; j < mapper.length ; j++)
 			{
-				System.out.print(" "+ mapper[i][j] + " ");
+				System.out.print(" "+ mapper[j][i] + " ");
 			} 
 			System.out.println("]");
 		}	
@@ -387,10 +504,11 @@ public class Field extends MatrixUtil{
 	public static int[][] localSearch(int[][] mapper) {
 		double betterEvaluation = 0.0;
 		MatrixPosition betterBomb = null;
+		int counter = 0;
 		
 		switch (Field.difficulty) {
 			case 1:
-				while(Field.evaluateMap(mapper) >= 0.5){
+				while(Field.evaluateMap(mapper) >= 0.5 && counter != 200){
 					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 					
 					//fazendo a avaliação das densidades locais das bombas
@@ -409,6 +527,9 @@ public class Field extends MatrixUtil{
 					
 					//Inserir uma bomba
 					mapper = insertBomb(mapper);
+					
+					counter++;
+					
 				}
 				System.out.println("Final Difficulty evaluation = " + Field.evaluateMap(mapper));
 				break;
