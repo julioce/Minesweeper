@@ -15,55 +15,52 @@ public class Field extends MatrixUtil{
 	public static int difficulty;
 	public static int bombQuantity;
 
-	public static double evaluateMap(int[][] mapper) {
-		int values[] = {0, 0, 0, 0, 0, 0, 0, 0};
-		double evaluationGrade = 0;
+	public static int evaluateMap(int[][] mapper) {
+
+		// bombas agregadas, jogo mais f·cil
 		
-		int nLines = mapper.length;
-		int nColumns = mapper[0].length;
+		double area = (double)lines*columns;
+		double easierGame = new Double((area - bombQuantity) /area);
 		
-		for (int i=0; i< nLines; i++){
-			for(int j=0; j < nColumns; j++){
-				switch (mapper[i][j]) {
-				case 1:
-					values[0]++; 
-					break;
-				case 2:
-					values[1]++; 
-					break;
-				case 3:
-					values[2]++; 
-					break;
-				case 4:
-					values[3]++; 
-					break;
-				case 5:
-					values[4]++; 
-					break;
-				case 6:
-					values[5]++; 
-					break;
-				case 7:
-					values[6]++; 
-					break;
-				case 8:
-					values[7]++; 
-					break;
-				default:
-					break;
+		// bombas dispersas, jogo mais difÌcil
+		double harderGame = 0;
+		int qtOfOptBombs = (int)area/9;
+		if((area) - (9*bombQuantity) >= 0){
+			harderGame = new Double((lines*columns - (9*bombQuantity)) / area);
+		}
+		
+		// avaliaÁ„o do jogo gerado
+		int whiteSpaces = 0;
+		for (int i = 0; i < mapper.length; i++) {
+			for (int j = 0; j < mapper[0].length; j++) {
+				if(mapper[i][j] == 0){
+					whiteSpaces++;
 				}
-				
 			}
 		}
+		double currentGame = new Double(whiteSpaces/lines*columns);
 		
-		for (int i = 1; i < values.length; i++) {
-			values[i] = (8-i)*values[i];
-			evaluationGrade += values[i];
+		// calcula o valor de fornteira do f·cil para o mÈdio
+		double intervalo = (easierGame - harderGame);
+		double easyToMediumGame = easierGame + intervalo*0.33;
+		// calcula o valor de fornteira do mÈdio para o difÌcil
+		double mediumToHardValue = easierGame + intervalo*0.66;
+		System.out.println("easier = " +easierGame);
+		System.out.println(harderGame);
+		System.out.println(easyToMediumGame);
+		System.out.println(mediumToHardValue);
+		
+		// avalia em qual estado o jogo atual est·
+		if(currentGame <= easyToMediumGame){
+			System.out.println(currentGame);
+			return 1;
+		}if(currentGame > easyToMediumGame && currentGame <= mediumToHardValue){
+			System.out.println(currentGame);
+			return 2;
+		}else{
+			System.out.println(currentGame);
+			return 3;
 		}
-		
-		evaluationGrade = evaluationGrade/(nColumns*nColumns);
-		
-		return evaluationGrade;
 	}
 
 	public static void setUpMap(int mapper[][]){
@@ -164,7 +161,6 @@ public class Field extends MatrixUtil{
 		int indextoRemove = bombPosition.indexOf(pos);
 		if(indextoRemove >= 0)
 		{
-			System.out.println("achei");
 			bombPosition.remove(indextoRemove);
 		}
 		
@@ -511,8 +507,8 @@ public class Field extends MatrixUtil{
 		
 		switch (Field.difficulty) {
 			case 1:
-				while(Field.evaluateMap(mapper) >= 0.5 && counter != 200){
-					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+				while(Field.evaluateMap(mapper) != 1 && counter != 200){
+					//System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 					
 					//fazendo a avalia√ß√£o das densidades locais das bombas
 					for (MatrixPosition bombPos :Field.bombPosition) {
@@ -538,7 +534,7 @@ public class Field extends MatrixUtil{
 				break;
 			case 2:
 				while(Field.evaluateMap(mapper) < 0.5 || Field.evaluateMap(mapper) >= 1.0 ){
-					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+					//System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 					//fazendo a avalia√ß√£o das densidades locais das bombas
 					for (MatrixPosition bombPos :Field.bombPosition) {
 						//mapa local
@@ -563,7 +559,7 @@ public class Field extends MatrixUtil{
 					//Inserir uma bomba
 					mapper = insertBomb(mapper);
 				}
-				System.out.println("Final Difficulty evaluation = " + Field.evaluateMap(mapper));
+				//System.out.println("Final Difficulty evaluation = " + Field.evaluateMap(mapper));
 				break;
 			case 3:
 				while(Field.evaluateMap(mapper) <= 1.0){
