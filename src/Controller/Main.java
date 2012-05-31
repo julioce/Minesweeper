@@ -27,15 +27,7 @@ public class Main {
 		Field.generateBombs(mapper);
 		Field.validateBombSpaces(mapper);
 		Field.evaluateMap(mapper);
-		
-		
-		//fazendo a avaliação das densidades das bombas
-		for (MatrixPosition bombPos :Field.bombPosition) {
-			int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
-			Field.printGameInConsole(localMapper);
-			Field.evaluateMap(localMapper);
-		}
-		
+		mapper = Field.localSearch(mapper);
 		Field.printGame(mapper);
 	}
 	

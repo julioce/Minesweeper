@@ -3,8 +3,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
 import View.Button;
 import View.Window;
 
@@ -15,7 +13,7 @@ public class Field extends MatrixUtil{
 	public static int difficulty;
 	public static int bombQuantity;
 
-	public static void evaluateMap(int[][] mapper) {
+	public static double evaluateMap(int[][] mapper) {
 		int values[] = {0, 0, 0, 0, 0, 0, 0, 0};
 		double evaluationGrade = 0;
 		
@@ -57,13 +55,13 @@ public class Field extends MatrixUtil{
 		}
 		
 		for (int i = 1; i < values.length; i++) {
-			values[i] = values[i]*i;
+			values[i] = (8-i)*values[i];
 			evaluationGrade += values[i];
 		}
 		
 		evaluationGrade = evaluationGrade/(nColumns*nColumns);
 		
-		System.out.println("Difficulty evaluation = " + evaluationGrade);
+		return evaluationGrade;
 	}
 
 	public static void setUpMap(int mapper[][]){
@@ -111,18 +109,15 @@ public class Field extends MatrixUtil{
 		System.out.println("Inserted bombs = " + insertedBombs);
 	}
 	
-	public static boolean removeBomb(int mapper[][], MatrixPosition pos)
+	public static int[][] removeBomb(int mapper[][], MatrixPosition pos)
 	{
-		boolean isRemoved = false;
-		
 		if(mapper[pos.X][pos.Y] == -1)
 		{
 			mapper[pos.X][pos.Y] = 0;
-			isRemoved = true;
 			UpdateNearFields(mapper, pos, false);
 		}
 		
-		return isRemoved;
+		return mapper;
 	}
 	
 	public static void UpdateNearFields(int mapper[][], MatrixPosition pos, boolean isInserted){
@@ -133,7 +128,7 @@ public class Field extends MatrixUtil{
 		if(isNearValid(mapper, pos, NearPositionEnum.N)){
 			
 			newPosX = pos.X + NearPositionEnum.N.x;
-			newPosY = pos.Y  + NearPositionEnum.N.y;
+			newPosY = pos.Y + NearPositionEnum.N.y;
 			if(mapper[newPosX][newPosY] != -1){
 				if(isInserted)
 					mapper[newPosX][newPosY]++;
@@ -387,5 +382,128 @@ public class Field extends MatrixUtil{
 		
 		return localMapper;
 				
+	}
+
+	public static int[][] localSearch(int[][] mapper) {
+		double betterEvaluation = 0.0;
+		MatrixPosition betterBomb = null;
+		
+		switch (Field.difficulty) {
+			case 1:
+				while(Field.evaluateMap(mapper) >= 0.5){
+					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+					
+					//fazendo a avaliação das densidades locais das bombas
+					for (MatrixPosition bombPos :Field.bombPosition) {
+						//mapa local
+						int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
+						
+						//guarda a melhoar avalaliação
+						if(Field.evaluateMap(localMapper) >= betterEvaluation){
+							betterBomb = bombPos;
+						}
+					}
+					
+					//Remover a bomba
+					mapper = removeBomb(mapper, betterBomb);
+					
+					//Inserir uma bomba
+					mapper = insertBomb(mapper);
+				}
+				System.out.println("Final Difficulty evaluation = " + Field.evaluateMap(mapper));
+				break;
+			case 2:
+				while(Field.evaluateMap(mapper) < 0.5 || Field.evaluateMap(mapper) >= 1.0 ){
+					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+					//fazendo a avaliação das densidades locais das bombas
+					for (MatrixPosition bombPos :Field.bombPosition) {
+						//mapa local
+						int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
+						
+						//guarda a melhoar avalaliação
+						if(Field.evaluateMap(mapper) < 0.5){
+							if(Field.evaluateMap(localMapper) >= betterEvaluation){
+								betterBomb = bombPos;
+							}
+						}else{
+							if(Field.evaluateMap(localMapper) <= betterEvaluation){
+								betterBomb = bombPos;
+							}
+						}
+						
+					}
+					
+					//Remover a bomba
+					mapper = removeBomb(mapper, betterBomb);
+					
+					//Inserir uma bomba
+					mapper = insertBomb(mapper);
+				}
+				System.out.println("Final Difficulty evaluation = " + Field.evaluateMap(mapper));
+				break;
+			case 3:
+				while(Field.evaluateMap(mapper) <= 1.0){
+					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+					//fazendo a avaliação das densidades locais das bombas
+					for (MatrixPosition bombPos :Field.bombPosition) {
+						//mapa local
+						int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
+						
+						//guarda a melhoar avalaliação
+						if(Field.evaluateMap(localMapper) <= betterEvaluation){
+							betterBomb = bombPos;
+						}
+					}
+					
+					//Remover a bomba
+					mapper = removeBomb(mapper, betterBomb);
+					
+					//Inserir uma bomba
+					mapper = insertBomb(mapper);
+				}
+				System.out.println("Final Difficulty evaluation = " + Field.evaluateMap(mapper));
+				break;
+
+			default:
+				break;
+		}
+		
+		return mapper;
+	}
+
+	private static int[][] insertBomb(int[][] mapper) {
+		Random randGenerator = new Random();
+		int randLine = randGenerator.nextInt() % lines;
+		if(randLine < 0){
+			randLine*=-1;
+		}
+		
+		int randColumn = randGenerator.nextInt() % columns;
+		if(randColumn < 0){
+			randColumn*=-1;
+		}
+		
+		while(mapper[randLine][randColumn] != -1){
+			//adicionando bomba
+			mapper[randLine][randColumn] = -1;
+			
+			bombPosition.add(new MatrixPosition(randLine,randColumn));
+			
+			MatrixPosition pos = new MatrixPosition(randLine, randColumn);
+			UpdateNearFields(mapper,pos,true);
+			
+			//Inserir uma bomba
+			randLine = randGenerator.nextInt() % lines;
+			if(randLine < 0){
+				randLine*=-1;
+			}
+			
+			randColumn = randGenerator.nextInt() % columns;
+			if(randColumn < 0){
+				randColumn*=-1;
+			}
+		}
+		
+		return mapper;
 	}
 }
