@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import View.Button;
 import View.Window;
 
@@ -159,10 +161,11 @@ public class Field extends MatrixUtil{
 	{
 		mapper[pos.X][pos.Y] = 0;
 		UpdateNearFields(mapper, pos, false);
-		if (bombPosition.contains(pos))
+		int indextoRemove = bombPosition.indexOf(pos);
+		if(indextoRemove >= 0)
 		{
 			System.out.println("achei");
-			bombPosition.remove(pos);
+			bombPosition.remove(indextoRemove);
 		}
 		
 		return mapper;
@@ -594,37 +597,28 @@ public class Field extends MatrixUtil{
 
 	private static int[][] insertBomb(int[][] mapper) {
 		Random randGenerator = new Random();
-		int randLine = randGenerator.nextInt() % lines;
-		if(randLine < 0){
-			randLine*=-1;
-		}
-		
-		int randColumn = randGenerator.nextInt() % columns;
-		if(randColumn < 0){
-			randColumn*=-1;
-		}
-		
-		while(mapper[randLine][randColumn] != -1){
-			//adicionando bomba
-			mapper[randLine][randColumn] = -1;
-			
-			bombPosition.add(new MatrixPosition(randLine,randColumn));
-			
-			MatrixPosition pos = new MatrixPosition(randLine, randColumn);
-			UpdateNearFields(mapper,pos,true);
-			
-			//Inserir uma bomba
+		int randLine;
+		int randColumn;
+		do 
+		{//Inserir uma bomba
 			randLine = randGenerator.nextInt() % lines;
 			if(randLine < 0){
 				randLine*=-1;
 			}
-			
 			randColumn = randGenerator.nextInt() % columns;
 			if(randColumn < 0){
 				randColumn*=-1;
 			}
-		}
+		}while(mapper[randLine][randColumn] == -1);
 		
+		//adicionando bomba
+		mapper[randLine][randColumn] = -1;
+		
+		bombPosition.add(new MatrixPosition(randLine,randColumn));
+		
+		MatrixPosition pos = new MatrixPosition(randLine, randColumn);
+		UpdateNearFields(mapper,pos,true);
+			
 		return mapper;
 	}
 }

@@ -35,7 +35,7 @@ public class Main {
 		
 		//Field.validateBombSpaces(mapper);
 		Field.evaluateMap(mapper);
-		//mapper = Field.localSearch(mapper);
+		Field.localSearch(mapper);
 		Field.printGame(mapper);
 	}
 	
