@@ -38,18 +38,5 @@ public class Main {
 		Field.localSearch(mapper);
 		Field.printGame(mapper);
 	}
-	
-	public static void setSize(int linesValue, int columnsValue) {
-		Field.lines = linesValue;
-		Field.columns = columnsValue;
-	}
-
-	public static void setDifficulty(int i) {
-		Field.difficulty = i;
-	}
-
-	public static void setBombQuantity(int bombs) {
-		Field.bombQuantity = bombs;
-	}
 
 }

@@ -3,8 +3,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import javax.swing.text.StyledEditorKit.BoldAction;
-
 import View.Button;
 import View.Window;
 
@@ -15,21 +13,36 @@ public class Field extends MatrixUtil{
 	public static int difficulty;
 	public static int bombQuantity;
 
+	public static void setLines(int lines) {
+		Field.lines = lines;
+	}
+
+	public static void setColumns(int columns) {
+		Field.columns = columns;
+	}
+	
+	public static void setDifficulty(int difficulty) {
+		Field.difficulty = difficulty;
+	}
+
+	public static void setBombQuantity(int bombQuantity) {
+		Field.bombQuantity = bombQuantity;
+	}
+
 	public static int evaluateMap(int[][] mapper) {
 
-		// bombas agregadas, jogo mais fácil
-		
 		double area = (double)lines*columns;
-		double easierGame = new Double((area - bombQuantity) /area);
 		
-		// bombas dispersas, jogo mais difícil
-		double harderGame = 0;
-		int qtOfOptBombs = (int)area/9;
-		if((area) - (9*bombQuantity) >= 0){
-			harderGame = new Double((lines*columns - (9*bombQuantity)) / area);
+		// bombas agregadas, jogo mais facil
+		double easierGame = 1.0 - (area - (double)bombQuantity) / area;
+		
+		// bombas dispersas, jogo mais dificil
+		double harderGame = 1.0;
+		if(area - (9*bombQuantity) >= 0){
+			harderGame = 1.0 - (area - (9.0*(double)bombQuantity)) / area;
 		}
 		
-		// avaliação do jogo gerado
+		// avaliacao do jogo gerado
 		int whiteSpaces = 0;
 		for (int i = 0; i < mapper.length; i++) {
 			for (int j = 0; j < mapper[0].length; j++) {
@@ -38,27 +51,21 @@ public class Field extends MatrixUtil{
 				}
 			}
 		}
-		double currentGame = new Double(whiteSpaces/lines*columns);
+		double currentGame = 1.0 - (double)whiteSpaces/area;
 		
-		// calcula o valor de fornteira do fácil para o médio
-		double intervalo = (easierGame - harderGame);
+		// calcula o valor de fornteira do facil para o medio
+		double intervalo = (harderGame - easierGame);
 		double easyToMediumGame = easierGame + intervalo*0.33;
-		// calcula o valor de fornteira do médio para o difícil
-		double mediumToHardValue = easierGame + intervalo*0.66;
-		System.out.println("easier = " +easierGame);
-		System.out.println(harderGame);
-		System.out.println(easyToMediumGame);
-		System.out.println(mediumToHardValue);
 		
-		// avalia em qual estado o jogo atual está
+		// calcula o valor de fornteira do medio para o dificil
+		double mediumToHardValue = easierGame + intervalo*0.66;
+		
+		// avalia em qual estado o jogo atual esta
 		if(currentGame <= easyToMediumGame){
-			System.out.println(currentGame);
 			return 1;
 		}if(currentGame > easyToMediumGame && currentGame <= mediumToHardValue){
-			System.out.println(currentGame);
 			return 2;
 		}else{
-			System.out.println(currentGame);
 			return 3;
 		}
 	}
@@ -530,10 +537,10 @@ public class Field extends MatrixUtil{
 					counter++;
 					
 				}
-				System.out.println("Final Difficulty evaluation = " + Field.evaluateMap(mapper));
+				
 				break;
 			case 2:
-				while(Field.evaluateMap(mapper) < 0.5 || Field.evaluateMap(mapper) >= 1.0 ){
+				while(Field.evaluateMap(mapper) != 2 && counter != 200){
 					//System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 					//fazendo a avaliaÃ§Ã£o das densidades locais das bombas
 					for (MatrixPosition bombPos :Field.bombPosition) {
@@ -559,10 +566,10 @@ public class Field extends MatrixUtil{
 					//Inserir uma bomba
 					mapper = insertBomb(mapper);
 				}
-				//System.out.println("Final Difficulty evaluation = " + Field.evaluateMap(mapper));
+				
 				break;
 			case 3:
-				while(Field.evaluateMap(mapper) <= 1.0){
+				while(Field.evaluateMap(mapper) != 3 && counter != 200){
 					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 					//fazendo a avaliaÃ§Ã£o das densidades locais das bombas
 					for (MatrixPosition bombPos :Field.bombPosition) {
@@ -581,7 +588,7 @@ public class Field extends MatrixUtil{
 					//Inserir uma bomba
 					mapper = insertBomb(mapper);
 				}
-				System.out.println("Final Difficulty evaluation = " + Field.evaluateMap(mapper));
+				
 				break;
 
 			default:

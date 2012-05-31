@@ -67,7 +67,7 @@ public class PopupWindow extends JPanel implements ActionListener {
 		difficultyIntermediary.setBounds(10, 95, 120, 20);
 		difficultyHard.setBounds(10, 115, 80, 20);
 		
-		startButton.setBounds(185, 90, 100, 20);
+		startButton.setBounds(185, 110, 100, 20);
 		
 		/* Adiciona no painel */
 		panel.add(linesValue);
@@ -85,7 +85,7 @@ public class PopupWindow extends JPanel implements ActionListener {
 		popupWindow.add(panel);
 		popupWindow.setLocationRelativeTo(Window.window);
 		popupWindow.setLocation(Window.WIDTH/4, Window.HEIGHT/4);
-		popupWindow.setPreferredSize(new Dimension(300, 150));
+		popupWindow.setPreferredSize(new Dimension(300, 180));
 		popupWindow.setResizable(false);
 		popupWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		popupWindow.pack();
@@ -94,32 +94,32 @@ public class PopupWindow extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent arg0) {
 		
-		try {
-			int lines = Integer.parseInt(linesValue.getText());
-			int columns = Integer.parseInt(columnsValue.getText());
-			int bombs = Integer.parseInt(bombQuantityValue.getText());
-			
-			if(arg0.getActionCommand().equals("start")) {
+		if(arg0.getActionCommand().equals("start")) {
+			try {
+				int lines = Integer.parseInt(linesValue.getText());
+				int columns = Integer.parseInt(columnsValue.getText());
+				int bombs = Integer.parseInt(bombQuantityValue.getText());
 				
 				if(Field.validateUserInput(lines, columns, bombs)){
 					/* Configura as linhas e colunas */
-					Main.setSize(lines, columns);
+					Field.setLines(lines);
+					Field.setColumns(columns);
 					
 					/* Configura a dificuldade */
 					String difficultyType = difficultyTypes.getSelection().getActionCommand();
 					
-					if(difficultyType == "setEasy"){
-						Main.setDifficulty(1);
-					}else if(difficultyType == "setIntermediary"){
-						Main.setDifficulty(2);
-					}else if(difficultyType == "setHard"){
-						Main.setDifficulty(3);
+					if(difficultyType.equals("setEasy")){
+						Field.setDifficulty(1);
+					}else if(difficultyType.equals("setIntermediary")){
+						Field.setDifficulty(2);
+					}else if(difficultyType.equals("setHard")){
+						Field.setDifficulty(3);
 					}else{
-						Main.setDifficulty(1);
+						Field.setDifficulty(1);
 					}
 					
 					/* Configura o número de bombas */
-					Main.setBombQuantity(bombs);
+					Field.setBombQuantity(bombs);
 					
 					/* Gera o campo */
 					Main.generateField();
@@ -131,11 +131,10 @@ public class PopupWindow extends JPanel implements ActionListener {
 				}else{
 					alertWindow = new AlertWindow();
 				}
-				
-				
+			}catch(NullPointerException e){
+				System.out.println(e);
 			}
-		} catch (Exception e) {
-			alertWindow = new AlertWindow();
+			
 		}
 		
 	}
