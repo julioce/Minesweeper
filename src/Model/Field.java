@@ -539,13 +539,85 @@ public class Field extends MatrixUtil{
 						if(insertBomb(mapper,getBestNewPosition(mapper)))
 						{
 							System.out.println("inserida");
+							printGameInConsole(mapper);
 						}
 						
 						populateBlankMap(mapper,blankMapper);
 					}
 				}
 				break;
-			case 2:			
+			case 2:	
+				int mapEvaluated = Field.evaluateMap(mapper);
+				while(mapEvaluated != 2)
+				{
+					if(mapEvaluated == 1)
+					{
+						System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+						//fazendo a avaliação das densidades locais das bombas
+						int bombQty = 0;
+						for (MatrixPosition bombPos :Field.bombPosition) {
+							//mapa local
+							int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
+							
+							int localBombQty = localMapBombCount(localMapper);
+							if(localBombQty > bombQty)
+							{
+								bombQty = localBombQty;
+								betterBomb = bombPos;
+							}
+						}					
+						
+						if(betterBomb != null)
+						{
+							//Remover a bomba
+							mapper = removeBomb(mapper, betterBomb);
+							
+							//Inserir uma bomba					
+							if(insertBomb(mapper,findBestBlankSpace(mapper, blankMapper)))
+							{
+								System.out.println("inserida");
+								printGameInConsole(mapper);
+							}
+							
+							populateBlankMap(mapper,blankMapper);
+						}
+					}
+					else if(mapEvaluated == 3)
+					{
+						System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+						//fazendo a avaliação das densidades locais das bombas
+						int bombQty = 8;
+						for (MatrixPosition bombPos :Field.bombPosition) {
+							//mapa local
+							int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
+							
+							int localBombQty = localMapBombCount(localMapper);
+							if(localBombQty < bombQty)
+							{
+								bombQty = localBombQty;
+								betterBomb = bombPos;
+							}
+						}					
+						
+						if(betterBomb != null)
+						{
+							//Remover a bomba
+							mapper = removeBomb(mapper, betterBomb);
+							
+							//Inserir uma bomba		
+							
+							if(insertBomb(mapper,getBestNewPosition(mapper)))
+							{
+								System.out.println("inserida");
+								printGameInConsole(mapper);
+							}
+							
+							populateBlankMap(mapper,blankMapper);
+						}
+					}
+					
+					mapEvaluated = Field.evaluateMap(mapper);
+				}
 				break;
 			case 3:
 				while(Field.evaluateMap(mapper) != 3){
@@ -573,6 +645,7 @@ public class Field extends MatrixUtil{
 						if(insertBomb(mapper,findBestBlankSpace(mapper, blankMapper)))
 						{
 							System.out.println("inserida");
+							printGameInConsole(mapper);
 						}
 						
 						populateBlankMap(mapper,blankMapper);
@@ -606,22 +679,31 @@ public class Field extends MatrixUtil{
 		
 		int[][] localMap = GetLocalMap(mapper, betterBomb);
 		int bestNear = 8;
-		
+		System.out.println("betterbomb = "+betterBomb.X +" "+ betterBomb.Y);
+		System.out.println(bestNear);
 		MatrixPosition posToInsertBomb = null;
+		
+		printGameInConsole(localMap);
 		for(int i = 0; i < localMap.length; i++)
 		{
 			for (int j = 0; j < localMap[0].length; j++) {
-				if(localMap[i][j] > 0 && i != 1 && j != 1)
+				System.out.println(" i = " + (i) + " j = " + (j));
+				if(i != 1 && j != 1)
 				{
-					if(localMap[i][j] <= bestNear)
+					if(localMap[i][j] != -1 || localMap[i][j] != 0)
 					{
-						bestNear = localMap[i][j];
-						posToInsertBomb = new MatrixPosition(betterBomb.X + i - 1, betterBomb.Y + j - 1);
+						if(localMap[i][j] <= bestNear)
+						{
+							bestNear = localMap[i][j];
+							System.out.println(bestNear);
+							System.out.println(" bi = " + (betterBomb.X + i - 1) + " bj = " + (betterBomb.Y + j - 1));
+							posToInsertBomb = new MatrixPosition(betterBomb.X + i - 1, betterBomb.Y + j - 1);
+						}	
 					}
 				}
 			}
 		}
-		
+		System.out.println("posToInsert = "+posToInsertBomb.X +" "+ posToInsertBomb.Y);
 		return posToInsertBomb;
 	}
 
