@@ -22,7 +22,7 @@ public class ReportWindow {
 	public ReportWindow(){
 		JScrollPane scroll = new JScrollPane(reportText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		reportText.setEditable(false);
-		scroll.setBounds(5, 5, WIDTH-10, HEIGHT-10);
+		scroll.setBounds(0, 0, WIDTH-10, HEIGHT-10);
 		
 		panel.add(scroll);
 		

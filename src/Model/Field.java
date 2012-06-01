@@ -46,7 +46,7 @@ public class Field extends MatrixUtil{
 		
 		// calcula o valor de fornteira do facil para o medio
 		easyToMediumField = easierGame + (harderGame - easierGame)*0.33;
-		addText("Easy to Intermediary Game evaluation  = " + easyToMediumField+"\n");
+		addText("Easy to Intermediary Game evaluation = " + easyToMediumField+"\n");
 		
 		// calcula o valor de fornteira do medio para o dificil
 		mediumToHardField = easierGame + (harderGame - easierGame)*0.66;
@@ -723,7 +723,7 @@ public class Field extends MatrixUtil{
 				}
 			}
 		}
-		addText("Best near value = " + bestNear);
+		addText("Best near value = " + bestNear+"\n");
 		addText("Location to insert bomb = ["+posToInsertBomb.X +", "+ posToInsertBomb.Y+"]\n");
 		return posToInsertBomb;
 	}

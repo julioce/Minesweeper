@@ -85,7 +85,7 @@ public class PopupWindow extends JPanel implements ActionListener {
 		popupWindow.add(panel);
 		popupWindow.setLocationRelativeTo(Window.window);
 		popupWindow.setLocation(Window.WIDTH/4, Window.HEIGHT/4);
-		popupWindow.setPreferredSize(new Dimension(300, 180));
+		popupWindow.setPreferredSize(new Dimension(300, 170));
 		popupWindow.setResizable(false);
 		popupWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		popupWindow.pack();
