@@ -503,6 +503,7 @@ public class Field extends MatrixUtil{
 		}
 		return bombCount;
 	}
+	
 
 	public static int[][] localSearch(int[][] mapper, int[][] blankMapper) {
 		double betterEvaluation = 0.0;
@@ -511,6 +512,38 @@ public class Field extends MatrixUtil{
 		
 		switch (Field.difficulty) {
 			case 1:				
+				while(Field.evaluateMap(mapper) != 1)
+				{
+					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+					//fazendo a avaliação das densidades locais das bombas
+					int bombQty = 8;
+					for (MatrixPosition bombPos :Field.bombPosition) {
+						//mapa local
+						int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
+						
+						int localBombQty = localMapBombCount(localMapper);
+						if(localBombQty < bombQty)
+						{
+							bombQty = localBombQty;
+							betterBomb = bombPos;
+						}
+					}					
+					
+					if(betterBomb != null)
+					{
+						//Remover a bomba
+						mapper = removeBomb(mapper, betterBomb);
+						
+						//Inserir uma bomba		
+						
+						if(insertBomb(mapper,getBestNewPosition(mapper)))
+						{
+							System.out.println("inserida");
+						}
+						
+						populateBlankMap(mapper,blankMapper);
+					}
+				}
 				break;
 			case 2:			
 				break;
@@ -553,6 +586,43 @@ public class Field extends MatrixUtil{
 		}
 		System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 		return mapper;
+	}
+	
+	private static MatrixPosition getBestNewPosition(int[][] mapper)
+	{
+		MatrixPosition betterBomb = null;
+		for (MatrixPosition bombPos :Field.bombPosition) {
+			int bombQty = 0;
+			//mapa local
+			int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
+			
+			int localBombQty = localMapBombCount(localMapper);
+			if(localBombQty >= bombQty)
+			{
+				bombQty = localBombQty;
+				betterBomb = bombPos;
+			}
+		}
+		
+		int[][] localMap = GetLocalMap(mapper, betterBomb);
+		int bestNear = 8;
+		
+		MatrixPosition posToInsertBomb = null;
+		for(int i = 0; i < localMap.length; i++)
+		{
+			for (int j = 0; j < localMap[0].length; j++) {
+				if(localMap[i][j] > 0 && i != 1 && j != 1)
+				{
+					if(localMap[i][j] <= bestNear)
+					{
+						bestNear = localMap[i][j];
+						posToInsertBomb = new MatrixPosition(betterBomb.X + i - 1, betterBomb.Y + j - 1);
+					}
+				}
+			}
+		}
+		
+		return posToInsertBomb;
 	}
 
 	private static boolean insertBomb(int[][] mapper, MatrixPosition pos) 
