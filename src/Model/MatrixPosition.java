@@ -7,6 +7,9 @@ public class MatrixPosition {
 		X = x;
 		Y = y;
 	}
+	public MatrixPosition() {
+		// TODO Auto-generated constructor stub
+	}
 	int X;
 	public int getX() {
 		return X;

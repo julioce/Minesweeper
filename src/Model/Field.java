@@ -472,7 +472,7 @@ public class Field extends MatrixUtil{
 		int[][] localMapper = new int[3][3];
 		
 		//setando o centro
-		localMapper[1][1] = mapper[pos.X][pos.Y];
+		localMapper[1][1] = -50;
 		
 		for (NearPositionEnum nearEnum : NearPositionEnum.values()) {			
 			if(isNearValid(mapper, pos, nearEnum)){
@@ -480,7 +480,7 @@ public class Field extends MatrixUtil{
 			}
 			else
 			{
-				localMapper[1 + nearEnum.x][ 1 + nearEnum.y] = 0;
+				localMapper[1 + nearEnum.x][ 1 + nearEnum.y] =-99;
 			}
 			
 		}	
@@ -493,15 +493,41 @@ public class Field extends MatrixUtil{
 	{
 		int bombCount = 0;
 		for (int i=0; i < mapper.length; i++){
-			for(int j=0; j < mapper[0].length ; j++){
-				// Gera os botões da janela
-				if(mapper[i][j] == -1 && i != 1 && j != 1)
+			for(int j=0; j < mapper[0].length; j++)
+			{
+				if(mapper[i][j] == -1)
 				{
 					bombCount++;
 				}
+
 			}
 		}
 		return bombCount;
+	}
+	
+	public static boolean isMapFullOfBomb(int mapper[][])
+	{
+		int bombCount = 0;
+		int spaceCount = 0;
+		for (int i=0; i < mapper.length; i++)
+		{
+			for(int j=0; j < mapper[0].length ; j++)
+			{
+				if(mapper[i][j] == -1)
+				{
+					bombCount++;
+				}
+				else if(mapper[i][j] == -99)
+				{
+					spaceCount++;
+				}
+			}
+		}
+		
+		if(bombCount + spaceCount == 8)
+			return true;
+		else
+			return false;
 	}
 	
 
@@ -519,8 +545,7 @@ public class Field extends MatrixUtil{
 					int bombQty = 8;
 					for (MatrixPosition bombPos :Field.bombPosition) {
 						//mapa local
-						int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
-						
+						int[][] localMapper = Field.GetLocalMap(mapper, bombPos);						
 						int localBombQty = localMapBombCount(localMapper);
 						if(localBombQty < bombQty)
 						{
@@ -589,8 +614,7 @@ public class Field extends MatrixUtil{
 						int bombQty = 8;
 						for (MatrixPosition bombPos :Field.bombPosition) {
 							//mapa local
-							int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
-							
+							int[][] localMapper = Field.GetLocalMap(mapper, bombPos);						
 							int localBombQty = localMapBombCount(localMapper);
 							if(localBombQty < bombQty)
 							{
@@ -664,41 +688,41 @@ public class Field extends MatrixUtil{
 	private static MatrixPosition getBestNewPosition(int[][] mapper)
 	{
 		MatrixPosition betterBomb = null;
+		int bombQty = 0;
 		for (MatrixPosition bombPos :Field.bombPosition) {
-			int bombQty = 0;
-			//mapa local
 			int[][] localMapper = Field.GetLocalMap(mapper, bombPos);
 			
-			int localBombQty = localMapBombCount(localMapper);
-			if(localBombQty >= bombQty)
+			if(!isMapFullOfBomb(localMapper))
 			{
-				bombQty = localBombQty;
-				betterBomb = bombPos;
+				int localBombQty = localMapBombCount(localMapper);
+				if(localBombQty != 8)
+				{	
+					if(localBombQty > bombQty)
+					{
+						bombQty = localBombQty;
+						betterBomb = bombPos;
+					}
+				}
 			}
 		}
+		System.out.println("betterbomb = "+betterBomb.X +" "+ betterBomb.Y);	
 		
 		int[][] localMap = GetLocalMap(mapper, betterBomb);
-		int bestNear = 8;
-		System.out.println("betterbomb = "+betterBomb.X +" "+ betterBomb.Y);
-		System.out.println(bestNear);
-		MatrixPosition posToInsertBomb = null;
-		
 		printGameInConsole(localMap);
+		
+		int bestNear = 8;
+		MatrixPosition posToInsertBomb = null;		
 		for(int i = 0; i < localMap.length; i++)
 		{
 			for (int j = 0; j < localMap[0].length; j++) {
+				System.out.println("bestnear = " + bestNear);
 				System.out.println(" i = " + (i) + " j = " + (j));
-				if(i != 1 && j != 1)
+				if(localMap[i][j] > 0)
 				{
-					if(localMap[i][j] != -1 || localMap[i][j] != 0)
+					if(localMap[i][j] <= bestNear)
 					{
-						if(localMap[i][j] <= bestNear)
-						{
-							bestNear = localMap[i][j];
-							System.out.println(bestNear);
-							System.out.println(" bi = " + (betterBomb.X + i - 1) + " bj = " + (betterBomb.Y + j - 1));
-							posToInsertBomb = new MatrixPosition(betterBomb.X + i - 1, betterBomb.Y + j - 1);
-						}	
+						bestNear = localMap[i][j];
+						posToInsertBomb = new MatrixPosition(betterBomb.X + i - 1, betterBomb.Y + j - 1);
 					}
 				}
 			}
