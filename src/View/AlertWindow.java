@@ -9,11 +9,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 public class AlertWindow implements ActionListener{
 	
-	public static JLabel message = new JLabel("Invalid values!", SwingConstants.CENTER);
+	public static JLabel message = new JLabel("Invalid values!");
 	public static JButton okButton = new JButton("Ok");
 	public static JFrame alertWindow = new JFrame("Error");
 	

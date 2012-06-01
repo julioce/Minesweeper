@@ -27,15 +27,19 @@ public class Main {
 		
 		Field.bombPosition = new ArrayList<MatrixPosition>();
 		
+		Field.addText("General Field Information\n----------------------\n");
 		Field.setUpMap(mapper);
 		Field.setUpBlankMap(blankMapper);
 		Field.generateBombs(mapper);
-		Field.populateBlankMap(mapper, blankMapper);
-		Field.printGameInConsole(blankMapper);
-		
-		//Field.validateBombSpaces(mapper);
+		Field.evaluateGame();
 		Field.evaluateMap(mapper);
-		Field.localSearch(mapper);
+		Field.addText("----------------------\n\n");
+		
+		Field.populateBlankMap(mapper, blankMapper);
+		//Field.printGameInConsole(blankMapper);
+		
+		Field.localSearch(mapper, blankMapper);
+		
 		Field.printGame(mapper);
 	}
 

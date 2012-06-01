@@ -128,11 +128,11 @@ public class PopupWindow extends JPanel implements ActionListener {
 					PopupWindow.popupWindow.dispose();
 					Window.window.setEnabled(true);
 					Window.gameMenu.setEnabled(true);
+					new ReportWindow();
 				}else{
 					alertWindow = new AlertWindow();
 				}
-			}catch(NullPointerException e){
-				System.out.println(e);
+			}catch(Exception e){
 			}
 			
 		}

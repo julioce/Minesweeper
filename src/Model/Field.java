@@ -1,9 +1,9 @@
 package Model;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 import View.Button;
+import View.ReportWindow;
 import View.Window;
 
 public class Field extends MatrixUtil{
@@ -12,6 +12,9 @@ public class Field extends MatrixUtil{
 	public static int columns;
 	public static int difficulty;
 	public static int bombQuantity;
+	public static double easyToMediumField;
+	public static double mediumToHardField;
+	public static double currentEvaluationField;
 
 	public static void setLines(int lines) {
 		Field.lines = lines;
@@ -29,8 +32,7 @@ public class Field extends MatrixUtil{
 		Field.bombQuantity = bombQuantity;
 	}
 
-	public static int evaluateMap(int[][] mapper) {
-
+	public static void evaluateGame(){
 		double area = (double)lines*columns;
 		
 		// bombas agregadas, jogo mais facil
@@ -38,9 +40,21 @@ public class Field extends MatrixUtil{
 		
 		// bombas dispersas, jogo mais dificil
 		double harderGame = 1.0;
-		if(area - (9*bombQuantity) >= 0){
+		if(area - (9.0*(double)bombQuantity) >= 0){
 			harderGame = 1.0 - (area - (9.0*(double)bombQuantity)) / area;
 		}
+		
+		// calcula o valor de fornteira do facil para o medio
+		easyToMediumField = easierGame + (harderGame - easierGame)*0.33;
+		addText("Easy to Intermediary Game evaluation  = " + easyToMediumField+"\n");
+		
+		// calcula o valor de fornteira do medio para o dificil
+		mediumToHardField = easierGame + (harderGame - easierGame)*0.66;
+		addText("Intermediary to Hard Game evaluation = " + mediumToHardField+"\n");
+	}
+	
+	public static int evaluateMap(int[][] mapper) {
+		double area = (double)lines*columns;
 		
 		// avaliacao do jogo gerado
 		int whiteSpaces = 0;
@@ -52,26 +66,18 @@ public class Field extends MatrixUtil{
 			}
 		}
 
-		double currentGame = 1.0 - (double)whiteSpaces/area;
-		System.out.println("current game = " + currentGame);
-
-		
-		// calcula o valor de fornteira do facil para o medio
-		double intervalo = (harderGame - easierGame);
-		double easyToMediumGame = easierGame + intervalo*0.33;
-
-		System.out.println("easytmedium = " + easyToMediumGame);
-		
-		// calcula o valor de fornteira do medio para o dificil
-		double mediumToHardValue = easierGame + intervalo*0.66;
-		System.out.println("mediumtohard = " + mediumToHardValue);
+		currentEvaluationField = 1.0 - (double)whiteSpaces/area;
+		addText("Current game evaluation = " + currentEvaluationField+"\n");
 		
 		// avalia em qual estado o jogo atual esta
-		if(currentGame <= easyToMediumGame){
+		if(currentEvaluationField <= easyToMediumField){
+			addText("Current difficulty evaluation = 1(Easy Game)\n");
 			return 1;
-		}if(currentGame > easyToMediumGame && currentGame <= mediumToHardValue){
+		}if(currentEvaluationField > easyToMediumField && currentEvaluationField <= mediumToHardField){
+			addText("Current difficulty evaluation = 2(Intermediary Game)\n");
 			return 2;
 		}else{
+			addText("Current difficulty evaluation = 3(Hard Game)\n");
 			return 3;
 		}
 	}
@@ -150,8 +156,8 @@ public class Field extends MatrixUtil{
 			}
 		}
 		
-		System.out.println("Bomb space conflicts = " + conflicts);
-		System.out.println("Inserted bombs = " + insertedBombs);
+		addText("Initial bomb space conflicts = " + conflicts+"\n");;
+		addText("Inserted bombs = " + insertedBombs+"\n");
 	}
 
 	public static void populateBlankMap(int mapper[][],int blankMapper[][])
@@ -169,7 +175,7 @@ public class Field extends MatrixUtil{
 	
 	public static int[][] removeBomb(int[][] mapper, MatrixPosition pos)
 	{
-		System.out.println("remove = "+ pos.X +","+ pos.Y);
+		addText("Remove bomb on Location = ["+ pos.X +", "+ pos.Y+"]\n");
 		mapper[pos.X][pos.Y] = 0;
 		UpdateNearFields(mapper, pos, false);
 		int indextoRemove = bombPosition.indexOf(pos);
@@ -428,10 +434,9 @@ public class Field extends MatrixUtil{
 		}
 	}
 	
-	public static void UpdateNearFieldsInBlankMap(int blankMapper[][],int x, int y){
+	public static void UpdateNearFieldsInBlankMap(int blankMapper[][], int x, int y){
 		UpdateNearFieldsInBlankMap(blankMapper,new MatrixPosition(x, y));
 	}
-	
 		
 	public static void printGame(int mapper[][]){
 		for (int i=0; i < lines; i++){
@@ -449,18 +454,17 @@ public class Field extends MatrixUtil{
 	public static void printGameInConsole(int mapper[][]){
 		for (int i=0; i < mapper.length; i++)
 		{
-			System.out.print(i+" [");
+			System.out.print(i+" [\n");
 			for(int j=0; j < mapper[0].length ; j++)
 			{
-				System.out.print(" "+ mapper[i][j] + " ");
+				System.out.print(" "+ mapper[i][j] + " \n");
 			} 
-			System.out.println("]");
+			addText("]\n");
 		}	
 	}
 	
-	
 	public static boolean validateUserInput(int lines, int columns, int bombs){
-		if(lines > 0 && columns > 0 && bombs > 0 && bombs < lines*columns){
+		if(lines > 0 && lines <= 50 && columns <= 50 && columns > 0 && bombs > 0 && bombs < lines*columns){
 			return true;
 		}else{
 			return false;
@@ -530,17 +534,13 @@ public class Field extends MatrixUtil{
 			return false;
 	}
 	
-
 	public static int[][] localSearch(int[][] mapper, int[][] blankMapper) {
-		double betterEvaluation = 0.0;
 		MatrixPosition betterBomb = null;
-		int counter = 0;
 		
 		switch (Field.difficulty) {
 			case 1:				
 				while(Field.evaluateMap(mapper) != 1)
 				{
-					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 					//fazendo a avaliação das densidades locais das bombas
 					int bombQty = 8;
 					for (MatrixPosition bombPos :Field.bombPosition) {
@@ -559,25 +559,24 @@ public class Field extends MatrixUtil{
 						//Remover a bomba
 						mapper = removeBomb(mapper, betterBomb);
 						
-						//Inserir uma bomba		
-						
-						if(insertBomb(mapper,getBestNewPosition(mapper)))
+						//Inserir uma bomba
+						if(insertBomb(mapper, getBestNewPosition(mapper)))
 						{
-							System.out.println("inserida");
-							printGameInConsole(mapper);
+							addText("Reevaluating Game...\n----------------------\n\n");
+							//printGameInConsole(mapper);
 						}
 						
-						populateBlankMap(mapper,blankMapper);
+						populateBlankMap(mapper, blankMapper);
 					}
 				}
 				break;
+			
 			case 2:	
 				int mapEvaluated = Field.evaluateMap(mapper);
 				while(mapEvaluated != 2)
 				{
 					if(mapEvaluated == 1)
 					{
-						System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 						//fazendo a avaliação das densidades locais das bombas
 						int bombQty = 0;
 						for (MatrixPosition bombPos :Field.bombPosition) {
@@ -600,16 +599,15 @@ public class Field extends MatrixUtil{
 							//Inserir uma bomba					
 							if(insertBomb(mapper,findBestBlankSpace(mapper, blankMapper)))
 							{
-								System.out.println("inserida");
-								printGameInConsole(mapper);
+								addText("Reevaluating Game...\n----------------------\n\n");
+								//printGameInConsole(mapper);
 							}
 							
-							populateBlankMap(mapper,blankMapper);
+							populateBlankMap(mapper, blankMapper);
 						}
 					}
 					else if(mapEvaluated == 3)
 					{
-						System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 						//fazendo a avaliação das densidades locais das bombas
 						int bombQty = 8;
 						for (MatrixPosition bombPos :Field.bombPosition) {
@@ -629,23 +627,22 @@ public class Field extends MatrixUtil{
 							mapper = removeBomb(mapper, betterBomb);
 							
 							//Inserir uma bomba		
-							
 							if(insertBomb(mapper,getBestNewPosition(mapper)))
 							{
-								System.out.println("inserida");
-								printGameInConsole(mapper);
+								addText("Reevaluating Game...\n----------------------\n\n");
+								//printGameInConsole(mapper);
 							}
 							
-							populateBlankMap(mapper,blankMapper);
+							populateBlankMap(mapper, blankMapper);
 						}
 					}
 					
 					mapEvaluated = Field.evaluateMap(mapper);
 				}
 				break;
+				
 			case 3:
 				while(Field.evaluateMap(mapper) != 3){
-					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 					//fazendo a avaliação das densidades locais das bombas
 					int bombQty = 0;
 					for (MatrixPosition bombPos :Field.bombPosition) {
@@ -668,11 +665,11 @@ public class Field extends MatrixUtil{
 						//Inserir uma bomba					
 						if(insertBomb(mapper,findBestBlankSpace(mapper, blankMapper)))
 						{
-							System.out.println("inserida");
-							printGameInConsole(mapper);
+							addText("Reevaluating Game...\n----------------------\n\n");
+							//printGameInConsole(mapper);
 						}
 						
-						populateBlankMap(mapper,blankMapper);
+						populateBlankMap(mapper, blankMapper);
 					}
 				}
 				
@@ -681,7 +678,7 @@ public class Field extends MatrixUtil{
 			default:
 				break;
 		}
-		System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+		
 		return mapper;
 	}
 	
@@ -705,18 +702,17 @@ public class Field extends MatrixUtil{
 				}
 			}
 		}
-		System.out.println("betterbomb = "+betterBomb.X +" "+ betterBomb.Y);	
+		addText("Chosen bomb Location = ["+betterBomb.X +", "+ betterBomb.Y+"]\n");	
 		
 		int[][] localMap = GetLocalMap(mapper, betterBomb);
-		printGameInConsole(localMap);
+		//printGameInConsole(localMap);
 		
 		int bestNear = 8;
 		MatrixPosition posToInsertBomb = null;		
 		for(int i = 0; i < localMap.length; i++)
 		{
 			for (int j = 0; j < localMap[0].length; j++) {
-				System.out.println("bestnear = " + bestNear);
-				System.out.println(" i = " + (i) + " j = " + (j));
+				//addText(" i = " + (i) + " j = " + (j));
 				if(localMap[i][j] > 0)
 				{
 					if(localMap[i][j] <= bestNear)
@@ -727,13 +723,14 @@ public class Field extends MatrixUtil{
 				}
 			}
 		}
-		System.out.println("posToInsert = "+posToInsertBomb.X +" "+ posToInsertBomb.Y);
+		addText("Best near value = " + bestNear);
+		addText("Location to insert bomb = ["+posToInsertBomb.X +", "+ posToInsertBomb.Y+"]\n");
 		return posToInsertBomb;
 	}
 
 	private static boolean insertBomb(int[][] mapper, MatrixPosition pos) 
 	{
-		System.out.println("insert = "+ pos.X +","+ pos.Y);
+		addText("Bomb inserted on = ["+ pos.X +", "+ pos.Y+"]\n");
 		boolean isInserted = false;
 		//adicionando bomba
 		if(mapper[pos.X][pos.Y] != -1)
@@ -771,5 +768,10 @@ public class Field extends MatrixUtil{
 		}
 		
 		return bestBlankPosition;
+	}
+	
+
+	public static void addText(String string) {
+		ReportWindow.addText(string);
 	}
 }
