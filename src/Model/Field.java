@@ -51,7 +51,9 @@ public class Field extends MatrixUtil{
 				}
 			}
 		}
+
 		double currentGame = 1.0 - (double)whiteSpaces/area;
+
 		
 		// calcula o valor de fornteira do facil para o medio
 		double intervalo = (harderGame - easierGame);
@@ -506,8 +508,23 @@ public class Field extends MatrixUtil{
 		return localMapper;
 				
 	}
+	
+	public static int localMapBombCount(int mapper[][])
+	{
+		int bombCount = 0;
+		for (int i=0; i < mapper.length; i++){
+			for(int j=0; j < mapper[0].length ; j++){
+				// Gera os botões da janela
+				if(mapper[i][j] == -1)
+				{
+					bombCount++;
+				}
+			}
+		}
+		return bombCount;
+	}
 
-	public static int[][] localSearch(int[][] mapper) {
+	public static int[][] localSearch(int[][] mapper, int[][] blankMapper) {
 		double betterEvaluation = 0.0;
 		MatrixPosition betterBomb = null;
 		int counter = 0;
@@ -515,7 +532,7 @@ public class Field extends MatrixUtil{
 		switch (Field.difficulty) {
 			case 1:
 				while(Field.evaluateMap(mapper) != 1 && counter != 200){
-					//System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 					
 					//fazendo a avaliação das densidades locais das bombas
 					for (MatrixPosition bombPos :Field.bombPosition) {
@@ -532,7 +549,8 @@ public class Field extends MatrixUtil{
 					mapper = removeBomb(mapper, betterBomb);
 					
 					//Inserir uma bomba
-					mapper = insertBomb(mapper);
+					
+//					mapper = insertBomb(mapper, findBestBlankSpace(mapper, blankMapper));
 					
 					counter++;
 					
@@ -541,7 +559,7 @@ public class Field extends MatrixUtil{
 				break;
 			case 2:
 				while(Field.evaluateMap(mapper) != 2 && counter != 200){
-					//System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
+					System.out.println("Difficulty evaluation = " + Field.evaluateMap(mapper));
 					//fazendo a avaliação das densidades locais das bombas
 					for (MatrixPosition bombPos :Field.bombPosition) {
 						//mapa local
@@ -564,7 +582,7 @@ public class Field extends MatrixUtil{
 					mapper = removeBomb(mapper, betterBomb);
 					
 					//Inserir uma bomba
-					mapper = insertBomb(mapper);
+//					mapper = insertBomb(mapper);
 				}
 				
 				break;
@@ -586,7 +604,12 @@ public class Field extends MatrixUtil{
 					mapper = removeBomb(mapper, betterBomb);
 					
 					//Inserir uma bomba
-					mapper = insertBomb(mapper);
+					
+					
+					if(insertBomb(mapper,findBestBlankSpace(mapper, blankMapper)))
+					{
+						System.out.println("inserida");
+					}
 				}
 				
 				break;
@@ -598,30 +621,44 @@ public class Field extends MatrixUtil{
 		return mapper;
 	}
 
-	private static int[][] insertBomb(int[][] mapper) {
-		Random randGenerator = new Random();
-		int randLine;
-		int randColumn;
-		do 
-		{//Inserir uma bomba
-			randLine = randGenerator.nextInt() % lines;
-			if(randLine < 0){
-				randLine*=-1;
-			}
-			randColumn = randGenerator.nextInt() % columns;
-			if(randColumn < 0){
-				randColumn*=-1;
-			}
-		}while(mapper[randLine][randColumn] == -1);
-		
+	private static boolean insertBomb(int[][] mapper, MatrixPosition pos) {
+	
+		boolean isInserted = false;
 		//adicionando bomba
-		mapper[randLine][randColumn] = -1;
+		if(mapper[pos.X][pos.Y] != -1)
+		{
 		
-		bombPosition.add(new MatrixPosition(randLine,randColumn));
+			mapper[pos.X][pos.Y] = -1;
+			bombPosition.add(pos);
+			UpdateNearFields(mapper,pos,true);	
+			isInserted = true;
+		}
+						
+		return isInserted;
+	}
+	
+	private static MatrixPosition findBestBlankSpace(int mapper[][], int blankMapper[][])
+	{
+		int nearBlankQty = 0;
+		MatrixPosition bestBlankPosition = new MatrixPosition(0, 0);
+		for (int i=0; i < blankMapper.length; i++){
+			for(int j=0; j < blankMapper[0].length ; j++){
+				if(mapper[i][j] != -1)
+				{
+					if(blankMapper[i][j] > 0 && blankMapper[i][j] > nearBlankQty)
+					{
+						nearBlankQty = blankMapper[i][j];
+						bestBlankPosition.setX(i);
+						bestBlankPosition.setY(j);
+					}
+				}
+				if (nearBlankQty == 8)
+				{
+					return bestBlankPosition;
+				}
+			}
+		}
 		
-		MatrixPosition pos = new MatrixPosition(randLine, randColumn);
-		UpdateNearFields(mapper,pos,true);
-			
-		return mapper;
+		return bestBlankPosition;
 	}
 }
